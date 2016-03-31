@@ -7,6 +7,7 @@ import time
 # 先锋服务集团 "00500" 1000
 # 中国太保 "02601" 200
 # 腾讯控股 "00700" 100
+# 御濠娱乐 00164 25000
 
 host = "localhost"
 port = 11111
@@ -17,7 +18,9 @@ localID = 0
 orderID = 1
 lastPrice = 0
 continuousRise = 0
+continuousRiseGap = 3
 continuousDrop = 0
+continuousDropGap = 3
 fullPostion = False
 count = 0
 connectSocket = FSApi.connect(host, port)
@@ -28,7 +31,6 @@ if connectSocket is not None:
         print "currentPrice", float(currentPrice) / 1000, "count", count, "time", time.strftime('%Y-%m-%d %H:%M:%S')
 
         fullPostion = FSApi.simu_hasPosition(connectSocket, tradeOneHand, stockCode)
-        # orderInfoArr = FSApi.simu_inquireOrder(connectSocket)
 
         if lastPrice != 0:
 
@@ -44,18 +46,18 @@ if connectSocket is not None:
             continuousRise = 0
             continuousDrop = 0
 
-        if continuousRise > 1:
+        if continuousRise >= continuousRiseGap:
             if not fullPostion:
                 sell_one = FSApi.getSellPrice(connectSocket, stockCode, 1, 0)
                 hasBuyOrder = False
                 orderInfoArr = FSApi.simu_inquireOrder(connectSocket)
                 if orderInfoArr is not None:
-	                for orderInfo in orderInfoArr:
-	                    if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
-	                        if orderInfo["OrderSide"] == "0" and orderInfo["Price"] == sell_one:
-	                            hasBuyOrder = True
-	                        else:
-	                            FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
+                    for orderInfo in orderInfoArr:
+                        if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
+                            if orderInfo["OrderSide"] == "0" and orderInfo["Price"] == sell_one:
+                                hasBuyOrder = True
+                            else:
+                                FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
 
                 if not hasBuyOrder:#如果没有未成交合适订单则下单
                     localID = FSApi.simu_commonBuyOrder(connectSocket, sell_one, tradeOneHand, stockCode)
@@ -66,18 +68,18 @@ if connectSocket is not None:
                     file.writelines(log)
                     file.close()
 
-        elif continuousDrop > 1:
+        elif continuousDrop >= continuousDropGap:
             if fullPostion:
                 buy_one = FSApi.getBuyPrice(connectSocket, stockCode, 1, 0)
                 hasSellOrder = False
                 orderInfoArr = FSApi.simu_inquireOrder(connectSocket)
                 if orderInfoArr is not None:
-	                for orderInfo in orderInfoArr:
-	                    if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
-	                        if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == buy_one:
-	                            hasSellOrder = True
-	                        else:
-	                            FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
+                    for orderInfo in orderInfoArr:
+                        if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
+                            if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == buy_one:
+                                hasSellOrder = True
+                            else:
+                                FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
 
                 if not hasSellOrder:
                     localID = FSApi.simu_commonSellOrder(connectSocket, buy_one, tradeOneHand, stockCode)
