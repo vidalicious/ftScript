@@ -61,7 +61,7 @@ if connectSocket is not None:
                     localID = FSApi.simu_commonBuyOrder(connectSocket, sell_one, tradeOneHand, stockCode)
                     orderID += 1
                     print "buy at", float(sell_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
-                    log = ["buy at ", str(float(sell_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", orderID, "\n"]
+                    log = ["buy at ", str(float(sell_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]
                     file = open("run log", "a+")
                     file.writelines(log)
                     file.close()
@@ -83,7 +83,7 @@ if connectSocket is not None:
                     localID = FSApi.simu_commonSellOrder(connectSocket, buy_one, tradeOneHand, stockCode)
                     orderID += 1
                     print "sell at", float(buy_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
-                    log = ["sell at ", str(float(buy_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", orderID, "\n"]
+                    log = ["sell at ", str(float(buy_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]
                     file = open("run log", "a+")
                     file.writelines(log)
                     file.close()
