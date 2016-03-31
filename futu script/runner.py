@@ -49,17 +49,18 @@ if connectSocket is not None:
                 sell_one = FSApi.getSellPrice(connectSocket, stockCode, 1, 0)
                 hasBuyOrder = False
                 orderInfoArr = FSApi.simu_inquireOrder(connectSocket)
-                for orderInfo in orderInfoArr:
-                    if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
-                        if orderInfo["OrderSide"] == "0" and orderInfo["Price"] == sell_one:
-                            hasBuyOrder = True
-                        else:
-                            FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
+                if orderInfoArr is not None:
+	                for orderInfo in orderInfoArr:
+	                    if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
+	                        if orderInfo["OrderSide"] == "0" and orderInfo["Price"] == sell_one:
+	                            hasBuyOrder = True
+	                        else:
+	                            FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
 
                 if not hasBuyOrder:#如果没有未成交合适订单则下单
                     localID = FSApi.simu_commonBuyOrder(connectSocket, sell_one, tradeOneHand, stockCode)
                     orderID += 1
-                    print ("buy at", float(sell_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID)
+                    print "buy at", float(sell_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
                     log = ["buy at ", str(float(sell_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", orderID, "\n"]
                     file = open("run log", "a+")
                     file.writelines(log)
@@ -70,17 +71,18 @@ if connectSocket is not None:
                 buy_one = FSApi.getBuyPrice(connectSocket, stockCode, 1, 0)
                 hasSellOrder = False
                 orderInfoArr = FSApi.simu_inquireOrder(connectSocket)
-                for orderInfo in orderInfoArr:
-                    if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
-                        if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == buy_one:
-                            hasSellOrder = True
-                        else:
-                            FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
+                if orderInfoArr is not None:
+	                for orderInfo in orderInfoArr:
+	                    if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
+	                        if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == buy_one:
+	                            hasSellOrder = True
+	                        else:
+	                            FSApi.simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
 
                 if not hasSellOrder:
                     localID = FSApi.simu_commonSellOrder(connectSocket, buy_one, tradeOneHand, stockCode)
                     orderID += 1
-                    print ("sell at", float(buy_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID)
+                    print "sell at", float(buy_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
                     log = ["sell at ", str(float(buy_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", orderID, "\n"]
                     file = open("run log", "a+")
                     file.writelines(log)
