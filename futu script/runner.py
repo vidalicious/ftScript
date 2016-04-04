@@ -28,9 +28,10 @@ continuousDropGap = 3
 fullPostion = False
 count = 0
 differentPercent = 0
+positiveDifferGap = 0.03
+negativeDifferGap = -0.03
 
 connectSocket = FSApi.connect(host, port)
-
 if connectSocket is not None:
     while True:
         currentPrice = FSApi.getCurrentPrice(connectSocket, stockCode)
@@ -53,9 +54,32 @@ if connectSocket is not None:
             continuousDrop = 0
 
         if lastPrice != 0:
-            differentPercent = float(currentPrice - lastPrice) / lastPrice
+            differentPercent = (float(currentPrice) - float(lastPrice)) / float(lastPrice)
+        else:
+            differentPercent = 0
 
-        if continuousRise >= continuousRiseGap or differentPercent > 0.03:
+        if continuousRise >= continuousRiseGap:
+            print "continuous rise ", continuousRise, " at ", time.strftime('%Y-%m-%d %H:%M:%S')
+            log = ["continuous rise ", str(continuousRise), " at ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
+            file = open("run log", "a+")
+            file.writelines(log)
+            file.close()
+
+        if continuousDrop >= continuousDropGap:
+            print "continuous drop ", continuousDrop, " at ", time.strftime('%Y-%m-%d %H:%M:%S')
+            log = ["continuous drop ", str(continuousDrop), " at ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
+            file = open("run log", "a+")
+            file.writelines(log)
+            file.close()
+
+        if differentPercent > positiveDifferGap or differentPercent < negativeDifferGap:
+            print "different percent ", differentPercent, " at ", time.strftime('%Y-%m-%d %H:%M:%S')
+            log = ["different percent ", str(differentPercent), " at ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
+            file = open("run log", "a+")
+            file.writelines(log)
+            file.close()
+
+        if continuousRise >= continuousRiseGap or differentPercent > positiveDifferGap:
             if not fullPostion:
                 sell_one = FSApi.getSellPrice(connectSocket, stockCode, 1, 0)
                 hasBuyOrder = False
@@ -77,7 +101,7 @@ if connectSocket is not None:
                     file.writelines(log)
                     file.close()
 
-        elif continuousDrop >= continuousDropGap or differentPercent < -0.03:
+        elif continuousDrop >= continuousDropGap or differentPercent < negativeDifferGap:
             if fullPostion:
                 buy_one = FSApi.getBuyPrice(connectSocket, stockCode, 1, 0)
                 hasSellOrder = False

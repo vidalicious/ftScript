@@ -58,7 +58,7 @@ def placeOrder(connectSocket, envType, orderSide, orderType, price, quality, sto
 	response = FSSender.send_req_and_get_rsp(connectSocket, "6003", requestPara, 1)
 
 	orderSuccess = True
-	localID = 0
+	localID = "0"
 	if response is not None:
 		for rsp in response:
 			if int(rsp["ErrCode"]) == 0:
@@ -136,9 +136,10 @@ def simu_inquireOrder(connectSocket):
 def simu_hasPosition(connectSocket, quality, stockCode):
 	positionArr = simu_inquirePosition(connectSocket)
 	hasPosition = False
-	for position in positionArr:
-		if stockCode == position["StockCode"] and int(position["CanSellQty"]) >= int(quality):
-			hasPosition = True
-			break
+	if positionArr is not None:
+		for position in positionArr:
+			if stockCode == position["StockCode"] and int(position["CanSellQty"]) >= int(quality):
+				hasPosition = True
+				break
 	return hasPosition
 # ================================= REAL ==================================
