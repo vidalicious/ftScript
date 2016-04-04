@@ -8,6 +8,10 @@ import time
 # 中国太保 "02601" 200
 # 腾讯控股 "00700" 100
 # 御濠娱乐 00164 25000
+# 盈健医疗 01419 2000
+# 中国金控 00875 20000
+# 中国环保能源 00986 20000
+# 优派能源发展 00307 2000
 
 host = "localhost"
 port = 11111
@@ -23,6 +27,8 @@ continuousDrop = 0
 continuousDropGap = 3
 fullPostion = False
 count = 0
+differentPercent = 0
+
 connectSocket = FSApi.connect(host, port)
 
 if connectSocket is not None:
@@ -46,7 +52,10 @@ if connectSocket is not None:
             continuousRise = 0
             continuousDrop = 0
 
-        if continuousRise >= continuousRiseGap:
+        if lastPrice != 0:
+            differentPercent = float(currentPrice - lastPrice) / lastPrice
+
+        if continuousRise >= continuousRiseGap or differentPercent > 0.03:
             if not fullPostion:
                 sell_one = FSApi.getSellPrice(connectSocket, stockCode, 1, 0)
                 hasBuyOrder = False
@@ -68,7 +77,7 @@ if connectSocket is not None:
                     file.writelines(log)
                     file.close()
 
-        elif continuousDrop >= continuousDropGap:
+        elif continuousDrop >= continuousDropGap or differentPercent < -0.03:
             if fullPostion:
                 buy_one = FSApi.getBuyPrice(connectSocket, stockCode, 1, 0)
                 hasSellOrder = False
