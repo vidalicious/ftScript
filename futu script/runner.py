@@ -90,7 +90,7 @@ if connectSocket is not None:
 
         if positionPriceDiffer < positionPriceGap:
             print "position price differ ", positionPriceDiffer, " at ", time.strftime('%Y-%m-%d %H:%M:%S')
-            log = ["position price differ ", str(positionPriceDiffer), " at ", time.strftime('%Y-%m-%d %H:%M:%S')]
+            log = ["position price differ ", str(positionPriceDiffer), " at ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
             file = open("run log", "a+")
             file.writelines(log)
             file.close()
