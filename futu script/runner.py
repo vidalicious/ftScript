@@ -59,17 +59,14 @@ if connectSocket is not None:
         else:
             differentPercent = 0
 
-<<<<<<< HEAD
-=======
         positionPriceDiffer = 0
         positionArr = FSApi.simu_inquirePosition(connectSocket)
         if positionArr is not None:
             for position in positionArr:
                 if position["StockCode"] == stockCode:
-                    positionPrice = position["CostPrice"]
+                    positionPrice = position["NominalPrice"]
                     positionPriceDiffer = (float(currentPrice) - float(positionPrice)) / float(positionPrice)
 
->>>>>>> 更新判断条件
         if continuousRise >= continuousRiseGap:
             print "continuous rise ", continuousRise, " at ", time.strftime('%Y-%m-%d %H:%M:%S')
             log = ["continuous rise ", str(continuousRise), " at ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
@@ -91,8 +88,6 @@ if connectSocket is not None:
             file.writelines(log)
             file.close()
 
-<<<<<<< HEAD
-=======
         if positionPriceDiffer < positionPriceGap:
             print "position price differ ", positionPriceDiffer, " at ", time.strftime('%Y-%m-%d %H:%M:%S')
             log = ["position price differ ", str(positionPriceDiffer), " at ", time.strftime('%Y-%m-%d %H:%M:%S')]
@@ -100,7 +95,6 @@ if connectSocket is not None:
             file.writelines(log)
             file.close()
 
->>>>>>> 更新判断条件
         if continuousRise >= continuousRiseGap or differentPercent > positiveDifferGap:
             if not fullPostion:
                 sell_one = FSApi.getSellPrice(connectSocket, stockCode, 1, 0)
@@ -123,11 +117,7 @@ if connectSocket is not None:
                     file.writelines(log)
                     file.close()
 
-<<<<<<< HEAD
-        elif continuousDrop >= continuousDropGap or differentPercent < negativeDifferGap:
-=======
         elif continuousDrop >= continuousDropGap or differentPercent < negativeDifferGap or positionPriceDiffer < positionPriceGap:
->>>>>>> 更新判断条件
             if fullPostion:
                 buy_one = FSApi.getBuyPrice(connectSocket, stockCode, 1, 0)
                 hasSellOrder = False
