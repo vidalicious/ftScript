@@ -143,3 +143,7 @@ def simu_hasPosition(connectSocket, quality, stockCode):
 				break
 	return hasPosition
 # ================================= REAL ==================================
+
+# ================================= UTIL ==================================
+def floatPrice(price):
+    return float(price) / 1000
