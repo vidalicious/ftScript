@@ -147,3 +147,12 @@ def simu_hasPosition(connectSocket, quality, stockCode):
 # ================================= UTIL ==================================
 def floatPrice(price):
     return float(price) / 1000
+
+def getAveragePriceFromList(list):
+	total = 0
+	if list is not None:
+		for price in list:
+			total += price
+		return total / len(list)
+	else:
+		return 0
