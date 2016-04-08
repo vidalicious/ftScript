@@ -132,16 +132,16 @@ def simu_inquirePosition(connectSocket):
 def simu_inquireOrder(connectSocket):
 	return inquireOrder(connectSocket, 1)
 
-# 	是否有关于该股票的仓位
-def simu_hasPosition(connectSocket, quality, stockCode):
-	positionArr = simu_inquirePosition(connectSocket)
-	hasPosition = False
-	if positionArr is not None:
-		for position in positionArr:
-			if stockCode == position["StockCode"] and int(position["CanSellQty"]) >= int(quality):
-				hasPosition = True
-				break
-	return hasPosition
+# # 	是否有关于该股票的仓位
+# def simu_hasPosition(connectSocket, quality, stockCode):
+# 	positionArr = simu_inquirePosition(connectSocket)
+# 	hasPosition = False
+# 	if positionArr is not None:
+# 		for position in positionArr:
+# 			if stockCode == position["StockCode"] and int(position["CanSellQty"]) >= int(quality):
+# 				hasPosition = True
+# 				break
+# 	return hasPosition
 # ================================= REAL ==================================
 
 # ================================= UTIL ==================================
@@ -156,3 +156,20 @@ def getAveragePriceFromList(list):
 		return total / len(list)
 	else:
 		return 0
+
+# 	是否有关于该股票的仓位
+def ifHasPositon(positionArr, quality, stockCode):
+	hasPosition = False
+	if positionArr is not None:
+		for position in positionArr:
+			if stockCode == position["StockCode"] and int(position["CanSellQty"]) >= int(quality):
+				hasPosition = True
+				break
+	return hasPosition
+
+def getPositionPrice(positionArr, stockCode):
+	if positionArr is not None:
+		for position in positionArr:
+			if position["StockCode"] == stockCode:
+				return position["NominalPrice"]
+	return "0"

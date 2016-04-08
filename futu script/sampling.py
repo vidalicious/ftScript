@@ -9,6 +9,7 @@ port = 11111
 stockCode = "01419"
 tradeOneHand = 2000
 
+oneTickTime = 3
 count = 0
 connectSocket = FSApi.connect(host, port)
 if connectSocket is not None:
@@ -20,5 +21,5 @@ if connectSocket is not None:
         file.writelines(log)
         file.close()
         count += 1
-        time.sleep(1)
+        time.sleep(oneTickTime)
 FSApi.disconnect(connectSocket)

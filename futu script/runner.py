@@ -38,8 +38,6 @@ if connectSocket is not None:
         currentPrice = FSApi.getCurrentPrice(connectSocket, stockCode)
         print "currentPrice", float(currentPrice) / 1000, "count", count, "time", time.strftime('%Y-%m-%d %H:%M:%S')
 
-        fullPostion = FSApi.simu_hasPosition(connectSocket, tradeOneHand, stockCode)
-
         if lastPrice != 0:
 
             if currentPrice > lastPrice:
@@ -66,6 +64,8 @@ if connectSocket is not None:
                 if position["StockCode"] == stockCode:
                     positionPrice = position["NominalPrice"]
                     positionPriceDiffer = (float(currentPrice) - float(positionPrice)) / float(positionPrice)
+
+        fullPostion = FSApi.ifHasPositon(positionArr, tradeOneHand, stockCode)
 
         if continuousRise >= continuousRiseGap:
             print "continuous rise ", continuousRise, " at ", time.strftime('%Y-%m-%d %H:%M:%S')
