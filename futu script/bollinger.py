@@ -5,14 +5,16 @@ import time
 from FSApi import *
 from math import *
 
+# 亚基帮租赁 01496 4000
+
 # ====================== config =================
-oneTickTime = 3
+oneTickTime = 1
 bollingRadius = 2 # 2倍标准差
 
 host = "localhost"
 port = 11111
-stockCode = "01419"
-tradeOneHand = 2000
+stockCode = "01496"
+tradeOneHand = 4000
 
 shortMovingTicks = 5
 longMovingTicks = 20
@@ -113,8 +115,11 @@ if connectSocket is not None:
             sellOutSignal = False
 
         # 止损
-        if (floatPrice(currentPrice) - positionPrice) / positionPrice < -0.03:
-            sellOutSignal = True
+        if positionPrice > 0:
+            if (floatPrice(currentPrice) - positionPrice) / positionPrice < -0.03:
+                sellOutSignal = True
+            else:
+                sellOutSignal = False
         else:
             sellOutSignal = False
 
