@@ -178,5 +178,5 @@ def getPositionRatio(positionArr, stockCode):
 	if positionArr is not None:
 		for position in positionArr:
 			if position["StockCode"] == stockCode:
-				return position["PLRatio"] / 100000
+				return float(position["PLRatio"]) / 100000
 	return 0
