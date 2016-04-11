@@ -171,5 +171,12 @@ def getPositionPrice(positionArr, stockCode):
 	if positionArr is not None:
 		for position in positionArr:
 			if position["StockCode"] == stockCode:
-				return position["NominalPrice"]
+				return position["CostPrice"]
 	return "0"
+
+def getPositionRatio(positionArr, stockCode):
+	if positionArr is not None:
+		for position in positionArr:
+			if position["StockCode"] == stockCode:
+				return position["PLRatio"] / 100000
+	return 0

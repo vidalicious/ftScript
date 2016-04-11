@@ -100,7 +100,7 @@ if connectSocket is not None:
         # ============== inquire position =====================
         positionArr = simu_inquirePosition(connectSocket)
         hasFullPosition = ifHasPositon(positionArr, tradeOneHand, stockCode)
-        positionPrice = floatPrice(getPositionPrice(positionArr, stockCode))
+        positionRatio = getPositionRatio(positionArr, stockCode)
 
         # ============== strategy ======================
         # 趋势上扬并且短期向上穿越
@@ -115,11 +115,8 @@ if connectSocket is not None:
             sellOutSignal = False
 
         # 止损
-        if positionPrice > 0:
-            if (floatPrice(currentPrice) - positionPrice) / positionPrice < -0.03:
-                sellOutSignal = True
-            else:
-                sellOutSignal = False
+        if positionRatio < -0.03:
+            sellOutSignal = True
         else:
             sellOutSignal = False
 
