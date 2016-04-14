@@ -13,8 +13,8 @@ bollingRadius = 2 # 2倍标准差
 
 host = "localhost"
 port = 11111
-stockCode = "01496"
-tradeOneHand = 4000
+stockCode = "01419"
+tradeOneHand = 2000
 
 shortMovingTicks = 5
 longMovingTicks = 20
@@ -54,6 +54,7 @@ sellOutSignal = False
 lastLocalMAStatus = MARelation.DEFAULT
 currentLocalMAStatus = MARelation.DEFAULT
 longMATrend = Trend.DEFAULT
+shortMATrend = Trend.DEFAULT
 
 connectSocket = connect(host, port)
 if connectSocket is not None:
@@ -92,6 +93,14 @@ if connectSocket is not None:
             else:
                 longMATrend = Trend.DEFAULT
 
+        if counter > 10:
+            if shortMAList[-1] < shortMAList[0]:
+                shortMATrend = Trend.UP
+            elif shortMAList[-1] > shortMAList[0]:
+                shortMATrend = Trend.DOWN
+            else:
+                shortMATrend = Trend.DEFAULT
+
         # ============== bollinger =================
         mean = (mean * counter + floatPrice(currentPrice)) / (counter + 1)
         variance = (variance * counter + (floatPrice(currentPrice) - mean) ** 2) / (counter + 1)
@@ -109,7 +118,8 @@ if connectSocket is not None:
         else:
             buyInSignal = False
 
-        if lastLocalMAStatus == MARelation.ABOVE and currentLocalMAStatus == MARelation.BELOW and longMATrend == Trend.DOWN:
+        # 短期趋势下降或短期向下穿越
+        if (lastLocalMAStatus == MARelation.ABOVE and currentLocalMAStatus == MARelation.BELOW) or shortMATrend == Trend.DOWN:
             sellOutSignal = True
         else:
             sellOutSignal = False
