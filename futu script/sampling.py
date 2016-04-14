@@ -53,7 +53,7 @@ if connectSocket is not None:
                 log = ["sell ", str(i + 1), " order ", sellOrder[i], " price ", str(floatPrice(sellPrice[i])), " vol ", sellVol[i], "\n"]
                 file.writelines(log)
 
-            log = ["=========================================================================================="]
+            log = ["==========================================================================================\n"]
             file.writelines(log)
 
         file.close()
