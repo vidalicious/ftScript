@@ -17,8 +17,8 @@ if connectSocket is not None:
         file = open("data", "a+")
         # =============== current price =================
         currentPrice = getCurrentPrice(connectSocket, stockCode)
-        print "currentPrice ", float(currentPrice) / 1000, " count ", count, " time ", time.strftime('%Y-%m-%d %H:%M:%S')
-        log = ["currentPrice ", str(float(currentPrice) / 1000), " count ", str(count), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
+        print "stock ", stockCode, " currentPrice ", float(currentPrice) / 1000, " count ", count, " time ", time.strftime('%Y-%m-%d %H:%M:%S')
+        log = ["stock ", stockCode, " currentPrice ", str(float(currentPrice) / 1000), " count ", str(count), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
         file.writelines(log)
 
         # =============== buy and sell ==================
