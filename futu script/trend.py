@@ -127,8 +127,6 @@ if connectSocket is not None:
         # 止损
         if positionRatio < -0.03:
             sellOutSignal = True
-        else:
-            sellOutSignal = False
 
         if floatPrice(currentPrice) > mean + bollingRadius * standardDeviation: #顶端
             pass
