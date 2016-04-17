@@ -5,7 +5,20 @@ import time
 from FSApi import *
 from math import *
 
-# 亚基帮租赁 01496 4000
+# 亚基帮租赁 01496   4000
+
+# 智美体育 01661     1000
+# 金蝶国际 00268     2000
+# 光启科学 00439     1000
+# 恒大地产 03333    1000
+# 永义实业  00616   5000
+
+# 新昌管理集团 02340 4000
+# 金嗓子 06896 500
+# 中联重科 01157 200
+# 凯升控股 00102 2000
+# 南旋控股  01982   2000
+# 宏安地产  01243   4000
 
 # ====================== config =================
 oneTickTime = 1
@@ -13,8 +26,8 @@ bollingRadius = 2 # 2倍标准差
 
 host = "localhost"
 port = 11111
-stockCode = "01419"
-tradeOneHand = 2000
+stockCode = "01661"
+tradeOneHand = 1000
 
 shortMovingTicks = 5
 longMovingTicks = 20

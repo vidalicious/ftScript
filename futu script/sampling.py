@@ -6,8 +6,8 @@ import time
 
 host = "localhost"
 port = 11111
-stockCode = "01419"
-tradeOneHand = 2000
+stockCode = "01661"
+tradeOneHand = 1000
 
 oneTickTime = 3
 count = 0
