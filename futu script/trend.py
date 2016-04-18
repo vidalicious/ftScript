@@ -123,6 +123,7 @@ if connectSocket is not None:
         positionArr = simu_inquirePosition(connectSocket)
         hasFullPosition = ifHasPositon(positionArr, tradeOneHand, stockCode)
         positionRatio = getPositionRatio(positionArr, stockCode)
+        print "tag 1"
 
         # ============== strategy ======================
         # 趋势上扬并且短期向上穿越
@@ -152,8 +153,10 @@ if connectSocket is not None:
         if buyInSignal:
             if not hasFullPosition:
                 sell_one = getSellPrice(connectSocket, stockCode, 1, 0)
+                print "tag 2"
                 hasBuyOrder = False
                 orderInfoArr = simu_inquireOrder(connectSocket)
+                print "tag 3"
                 if orderInfoArr is not None:
                     for orderInfo in orderInfoArr:
                         if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
@@ -161,9 +164,11 @@ if connectSocket is not None:
                                 hasBuyOrder = True
                             else:
                                 simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
+                                print "tag 4"
 
                 if not hasBuyOrder:#如果没有未成交合适订单则下单
                     localID = simu_commonBuyOrder(connectSocket, sell_one, tradeOneHand, stockCode)
+                    print "tag 5"
                     orderID += 1
                     print "buy at", float(sell_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
                     log = ["buy at ", str(float(sell_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]
@@ -174,8 +179,10 @@ if connectSocket is not None:
         elif sellOutSignal:
             if hasFullPosition:
                 buy_one = getBuyPrice(connectSocket, stockCode, 1, 0)
+                print "tag 6"
                 hasSellOrder = False
                 orderInfoArr = simu_inquireOrder(connectSocket)
+                print "tag 7"
                 if orderInfoArr is not None:
                     for orderInfo in orderInfoArr:
                         if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
@@ -183,9 +190,11 @@ if connectSocket is not None:
                                 hasSellOrder = True
                             else:
                                 simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
+                                print "tag 8"
 
                 if not hasSellOrder:
                     localID = simu_commonSellOrder(connectSocket, buy_one, tradeOneHand, stockCode)
+                    print "tag 9"
                     orderID += 1
                     print "sell at", float(buy_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
                     log = ["sell at ", str(float(buy_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]

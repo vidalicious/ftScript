@@ -44,14 +44,17 @@ if connectSocket is not None:
                 sellVol.append(gear["SellVol"])
 
         if buyPrice is not None:
+            for i in range(len(sellPrice))[::-1]:
+                print "sell ", i + 1, " order ", sellOrder[i], " price ", floatPrice(sellPrice[i]), " vol ", sellVol[i]
+                log = ["sell ", str(i + 1), " order ", sellOrder[i], " price ", str(floatPrice(sellPrice[i])), " vol ", sellVol[i], "\n"]
+                file.writelines(log)
+
             for i in range(len(buyPrice)):
                 print "buy ", i + 1, " order ", buyOrder[i], " price ", floatPrice(buyPrice[i]), " vol ", buyVol[i]
                 log = ["buy ", str(i + 1), " order ", buyOrder[i], " price ", str(floatPrice(buyPrice[i])), " vol ", buyVol[i], "\n"]
                 file.writelines(log)
 
-                print "sell ", i + 1, " order ", sellOrder[i], " price ", floatPrice(sellPrice[i]), " vol ", sellVol[i]
-                log = ["sell ", str(i + 1), " order ", sellOrder[i], " price ", str(floatPrice(sellPrice[i])), " vol ", sellVol[i], "\n"]
-                file.writelines(log)
+
 
             log = ["==========================================================================================\n"]
             file.writelines(log)

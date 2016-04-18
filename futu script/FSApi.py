@@ -54,7 +54,7 @@ def getGearData(connectSocket, stockCode, gearNum):
 def placeOrder(connectSocket, envType, orderSide, orderType, price, quality, stockCode):
 	global COOKIE
 	requestPara = {"Cookie": str(COOKIE), "EnvType": str(envType), "OrderSide": str(orderSide), "OrderType": str(orderType), "Price": str(price), "Qty": str(quality), "StockCode": stockCode}
-	COOKIE += 1
+	updateCookie(COOKIE)
 	response = FSSender.send_req_and_get_rsp(connectSocket, "6003", requestPara, 1)
 
 	orderSuccess = True
@@ -62,7 +62,6 @@ def placeOrder(connectSocket, envType, orderSide, orderType, price, quality, sto
 	if response is not None:
 		for rsp in response:
 			if int(rsp["ErrCode"]) == 0:
-
 				localID = rsp["RetData"]["LocalID"]
 			else:
 				orderSuccess = False
@@ -75,7 +74,7 @@ def placeOrder(connectSocket, envType, orderSide, orderType, price, quality, sto
 def setOrderStatus(connectSocket, envType, localID, orderID, setStatus):
 	global COOKIE
 	requestPara = {"Cookie": str(COOKIE), "EnvType": str(envType), "LocalID": str(localID), "OrderID": str(orderID), "SetOrderStatus": str(setStatus)}
-	COOKIE += 1
+	updateCookie(COOKIE)
 	response = FSSender.send_req_and_get_rsp(connectSocket, "6004", requestPara, 1)
 
 	setStatusSuccess = True
@@ -92,7 +91,7 @@ def setOrderStatus(connectSocket, envType, localID, orderID, setStatus):
 def inquirePosition(connectSocket, envType):
 	global COOKIE
 	requestPara = {"Cookie": str(COOKIE), "EnvType": str(envType)}
-	COOKIE += 1
+	updateCookie(COOKIE)
 	response = FSSender.send_req_and_get_rsp(connectSocket,"6009", requestPara, 1)
 
 	if int(response[0]["ErrCode"]) == 0:
@@ -104,7 +103,7 @@ def inquirePosition(connectSocket, envType):
 def inquireOrder(connectSocket, envType):
 	global COOKIE
 	requestPara = {"Cookie": str(COOKIE), "EnvType": str(envType)}
-	COOKIE += 1
+	updateCookie(COOKIE)
 	response = FSSender.send_req_and_get_rsp(connectSocket, "6008", requestPara, 1)
 
 	if int(response[0]["ErrCode"]) == 0:
@@ -145,6 +144,10 @@ def simu_inquireOrder(connectSocket):
 # ================================= REAL ==================================
 
 # ================================= UTIL ==================================
+def updateCookie(cookie):
+	cookie += 1
+	print "cookie ", cookie
+
 def floatPrice(price):
     return float(price) / 1000
 
