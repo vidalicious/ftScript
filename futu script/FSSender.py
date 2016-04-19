@@ -31,7 +31,10 @@ def send_req_and_get_rsp(socket_futu_api, protocol_code, req_param, protocol_ver
 	#收包
 	rsp_str = ""
 	while True:
-		buf = socket_futu_api.recv(int(buf_size))
+		try:
+			buf = socket_futu_api.recv(int(buf_size))
+		except socket.timeout:
+			break
 		rsp_str += buf
 		if(len(buf) < int(buf_size)):
 			break
