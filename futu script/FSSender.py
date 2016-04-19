@@ -27,6 +27,7 @@ def send_req_and_get_rsp(socket_futu_api, protocol_code, req_param, protocol_ver
 	except socket.timeout:
 		return
 
+	socket_futu_api.settimeout(3)
 	buf_size = 1024#50
 	#收包
 	rsp_str = ""

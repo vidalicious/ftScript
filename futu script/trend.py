@@ -183,7 +183,7 @@ if connectSocket is not None:
 
         if buyInSignal:
             if not hasFullPosition:
-                sell_one = getSellPrice(connectSocket, stockCode, 1, 0)
+                # sell_one = getSellPrice(connectSocket, stockCode, 1, 0)
                 print "tag 2"
                 hasBuyOrder = False
                 orderInfoArr = simu_inquireOrder(connectSocket)
@@ -191,25 +191,25 @@ if connectSocket is not None:
                 if orderInfoArr is not None:
                     for orderInfo in orderInfoArr:
                         if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
-                            if orderInfo["OrderSide"] == "0" and orderInfo["Price"] == sell_one:
+                            if orderInfo["OrderSide"] == "0" and orderInfo["Price"] == currentPrice:
                                 hasBuyOrder = True
                             else:
                                 simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
                                 print "tag 4"
 
                 if not hasBuyOrder:#如果没有未成交合适订单则下单
-                    localID = simu_commonBuyOrder(connectSocket, sell_one, tradeOneHand, stockCode)
+                    localID = simu_commonBuyOrder(connectSocket, currentPrice, tradeOneHand, stockCode)
                     print "tag 5"
                     orderID += 1
-                    print "buy at", float(sell_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
-                    log = ["buy at ", str(float(sell_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]
+                    print "buy at", float(currentPrice) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
+                    log = ["buy at ", str(float(currentPrice) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]
                     file = open("run log", "a+")
                     file.writelines(log)
                     file.close()
 
         elif sellOutSignal:
             if hasFullPosition:
-                buy_one = getBuyPrice(connectSocket, stockCode, 1, 0)
+                # buy_one = getBuyPrice(connectSocket, stockCode, 1, 0)
                 print "tag 6"
                 hasSellOrder = False
                 orderInfoArr = simu_inquireOrder(connectSocket)
@@ -217,18 +217,18 @@ if connectSocket is not None:
                 if orderInfoArr is not None:
                     for orderInfo in orderInfoArr:
                         if orderInfo["StockCode"] == stockCode and orderInfo["Status"] == "1":
-                            if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == buy_one:
+                            if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == currentPrice:
                                 hasSellOrder = True
                             else:
                                 simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)#撤单
                                 print "tag 8"
 
                 if not hasSellOrder:
-                    localID = simu_commonSellOrder(connectSocket, buy_one, tradeOneHand, stockCode)
+                    localID = simu_commonSellOrder(connectSocket, currentPrice, tradeOneHand, stockCode)
                     print "tag 9"
                     orderID += 1
-                    print "sell at", float(buy_one) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
-                    log = ["sell at ", str(float(buy_one) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]
+                    print "sell at", float(currentPrice) / 1000, "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "orderID", orderID
+                    log = ["sell at ", str(float(currentPrice) / 1000), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, " orderID ", str(orderID), "\n"]
                     file = open("run log", "a+")
                     file.writelines(log)
                     file.close()
