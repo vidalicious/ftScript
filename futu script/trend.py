@@ -59,6 +59,17 @@ class Trend:
     DEFAULT = 0
     UP = 1
     DOWN = 2
+
+lastBuyOnePrice = 0
+lastSellOnePrice = 0
+lastBuyOneVol = 0
+lastSellOneVol = 0
+
+currentBuyOnePrice = 0
+currentSellOnePrice = 0
+currentBuyOneVol = 0
+currentSellOneVol = 0
+
 # =======================================================================
 
 
@@ -126,18 +137,38 @@ if connectSocket is not None:
         print "tag 1"
 
         # ============== strategy ======================
-        # 趋势上扬并且短期向上穿越
-        if lastLocalMAStatus == MARelation.BELOW and currentLocalMAStatus == MARelation.ABOVE and longMATrend == Trend.UP:
-            buyInSignal = True
-        else:
-            buyInSignal = False
+        # # 趋势上扬并且短期向上穿越
+        # if lastLocalMAStatus == MARelation.BELOW and currentLocalMAStatus == MARelation.ABOVE and longMATrend == Trend.UP:
+        #     buyInSignal = True
+        # else:
+        #     buyInSignal = False
+        #
+        # # 短期趋势下降或短期向下穿越
+        # if (lastLocalMAStatus == MARelation.ABOVE and currentLocalMAStatus == MARelation.BELOW) or shortMATrend == Trend.DOWN:
+        #     sellOutSignal = True
+        # else:
+        #     sellOutSignal = False
 
-        # 短期趋势下降或短期向下穿越
-        if (lastLocalMAStatus == MARelation.ABOVE and currentLocalMAStatus == MARelation.BELOW) or shortMATrend == Trend.DOWN:
-            sellOutSignal = True
-        else:
-            sellOutSignal = False
+        # ================= gear =====================
+        gearArr = getGearData(connectSocket, stockCode, 1)
+        if gearArr is not None:
+            currentBuyOnePrice = floatPrice(gearArr[0]["BuyPrice"])
+            currentBuyOneVol = float(gearArr[0]["BuyVol"])
+            currentSellOnePrice = floatPrice(gearArr[0]["SellPrice"])
+            currentSellOneVol = float(gearArr[0]["SellVol"])
 
+            if lastBuyOnePrice == currentBuyOnePrice and lastSellOnePrice == currentSellOnePrice:
+                if currentBuyOneVol < currentSellOneVol:
+                    if currentBuyOneVol < lastBuyOneVol and currentSellOneVol / currentBuyOneVol > 3: #买1被消耗
+                        sellOutSignal = True
+                    else:
+                        sellOutSignal = False
+                else:
+                    if currentSellOneVol < lastSellOneVol and currentBuyOneVol / currentSellOneVol > 3: #卖1被消耗
+                        buyInSignal = True
+                    else:
+                        buyInSignal = False
+                    
         # 止损
         if positionRatio < -0.03:
             sellOutSignal = True
@@ -206,5 +237,10 @@ if connectSocket is not None:
         lastPrice = currentPrice
         counter += 1
         lastLocalMAStatus = currentLocalMAStatus
+
+        lastBuyOnePrice = currentBuyOnePrice
+        lastBuyOneVol = currentBuyOneVol
+        lastSellOnePrice = currentSellOnePrice
+        lastSellOneVol = currentSellOneVol
         time.sleep(oneTickTime)
 disconnect(connectSocket)
