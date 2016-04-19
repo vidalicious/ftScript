@@ -26,8 +26,8 @@ bollingRadius = 2 # 2倍标准差
 
 host = "localhost"
 port = 11111
-stockCode = "01661"
-tradeOneHand = 1000
+stockCode = "01157"
+tradeOneHand = 200
 
 shortMovingTicks = 5
 longMovingTicks = 20
