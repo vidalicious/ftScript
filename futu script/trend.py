@@ -70,6 +70,10 @@ currentSellOnePrice = 0
 currentBuyOneVol = 0
 currentSellOneVol = 0
 
+lastMidGearPrice = 0
+currentMidGearPrice = 0
+gearStableCounter = 0
+
 # =======================================================================
 
 
@@ -157,6 +161,10 @@ if connectSocket is not None:
             currentSellOnePrice = floatPrice(gearArr[0]["SellPrice"])
             currentSellOneVol = float(gearArr[0]["SellVol"])
 
+            currentMidGearPrice = (currentBuyOnePrice + currentSellOnePrice) / 2
+            if currentMidGearPrice != lastMidGearPrice:
+                gearStableCounter = 0
+
             if lastBuyOnePrice == currentBuyOnePrice and lastSellOnePrice == currentSellOnePrice:
                 if currentBuyOneVol < currentSellOneVol:
                     if currentBuyOneVol < lastBuyOneVol and currentSellOneVol / currentBuyOneVol > 3: #买1被消耗
@@ -236,11 +244,16 @@ if connectSocket is not None:
         # 更新需要记录的参数
         lastPrice = currentPrice
         counter += 1
+        gearStableCounter += 1
+
         lastLocalMAStatus = currentLocalMAStatus
 
         lastBuyOnePrice = currentBuyOnePrice
         lastBuyOneVol = currentBuyOneVol
         lastSellOnePrice = currentSellOnePrice
         lastSellOneVol = currentSellOneVol
+
+        lastMidGearPrice = currentMidGearPrice
+
         time.sleep(oneTickTime)
 disconnect(connectSocket)
