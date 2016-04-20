@@ -165,7 +165,7 @@ if connectSocket is not None:
             if currentMidGearPrice != lastMidGearPrice:
                 gearStableCounter = 0
 
-            if lastBuyOnePrice == currentBuyOnePrice and lastSellOnePrice == currentSellOnePrice:
+            if gearStableCounter > 10:
                 if currentBuyOneVol < currentSellOneVol:
                     if currentBuyOneVol < lastBuyOneVol and currentSellOneVol / currentBuyOneVol > 3: #买1被消耗
                         sellOutSignal = True
