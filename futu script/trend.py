@@ -29,8 +29,8 @@ port = 11111
 stockCode = "01157"
 tradeOneHand = 200
 
-shortMovingTicks = 5
-longMovingTicks = 20
+shortMovingTicks = 10
+longMovingTicks = 50
 # ===================================================
 counter = 0
 
@@ -76,6 +76,11 @@ gearStableCounter = 0
 
 # =======================================================================
 
+MABuyInSignal = False
+MASellOutSignal = False
+
+gearBuyInSignal = False
+gearSellOutSignal = False
 
 buyInSignal = False
 sellOutSignal = False
@@ -89,6 +94,12 @@ if connectSocket is not None:
     while True:
         currentPrice = getCurrentPrice(connectSocket, stockCode)
         print "currentPrice", floatPrice(currentPrice), "counter", counter, "time", time.strftime('%Y-%m-%d %H:%M:%S')
+
+        # ============== inquire position =====================
+        positionArr = simu_inquirePosition(connectSocket)
+        hasFullPosition = ifHasPositon(positionArr, tradeOneHand, stockCode)
+        positionRatio = getPositionRatio(positionArr, stockCode)
+        print "tag 1"
 
         # ============= moving average ================
 
@@ -129,29 +140,30 @@ if connectSocket is not None:
             else:
                 shortMATrend = Trend.DEFAULT
 
+        # 趋势上扬并且短期向上穿越
+        if lastLocalMAStatus == MARelation.BELOW and currentLocalMAStatus == MARelation.ABOVE and longMATrend == Trend.UP:
+            MABuyInSignal = True
+        else:
+            MABuyInSignal = False
+
+        # 短期趋势下降或短期向下穿越
+        if (lastLocalMAStatus == MARelation.ABOVE and currentLocalMAStatus == MARelation.BELOW) or shortMATrend == Trend.DOWN:
+            MASellOutSignal = True
+        else:
+            MASellOutSignal = False
+
         # ============== bollinger =================
         mean = (mean * counter + floatPrice(currentPrice)) / (counter + 1)
         variance = (variance * counter + (floatPrice(currentPrice) - mean) ** 2) / (counter + 1)
         standardDeviation = sqrt(variance)
 
-        # ============== inquire position =====================
-        positionArr = simu_inquirePosition(connectSocket)
-        hasFullPosition = ifHasPositon(positionArr, tradeOneHand, stockCode)
-        positionRatio = getPositionRatio(positionArr, stockCode)
-        print "tag 1"
-
-        # ============== strategy ======================
-        # # 趋势上扬并且短期向上穿越
-        # if lastLocalMAStatus == MARelation.BELOW and currentLocalMAStatus == MARelation.ABOVE and longMATrend == Trend.UP:
-        #     buyInSignal = True
-        # else:
-        #     buyInSignal = False
-        #
-        # # 短期趋势下降或短期向下穿越
-        # if (lastLocalMAStatus == MARelation.ABOVE and currentLocalMAStatus == MARelation.BELOW) or shortMATrend == Trend.DOWN:
-        #     sellOutSignal = True
-        # else:
-        #     sellOutSignal = False
+        if floatPrice(currentPrice) > mean + bollingRadius * standardDeviation: #顶端
+            pass
+        elif floatPrice(currentPrice) > mean - bollingRadius * standardDeviation\
+                and floatPrice(currentPrice) <= mean + bollingRadius * standardDeviation: # 带中
+            pass
+        else: #底部
+            pass
 
         # ================= gear =====================
         gearArr = getGearData(connectSocket, stockCode, 1)
@@ -168,26 +180,30 @@ if connectSocket is not None:
             if gearStableCounter > 10:
                 if currentBuyOneVol < currentSellOneVol:
                     if currentBuyOneVol < lastBuyOneVol and currentSellOneVol / currentBuyOneVol > 3: #买1被消耗
-                        sellOutSignal = True
+                        gearSellOutSignal = True
                     else:
-                        sellOutSignal = False
+                        gearSellOutSignal = False
                 else:
                     if currentSellOneVol < lastSellOneVol and currentBuyOneVol / currentSellOneVol > 3: #卖1被消耗
-                        buyInSignal = True
+                        gearBuyInSignal = True
                     else:
-                        buyInSignal = False
-                    
+                        gearBuyInSignal = False
+
+        # ============== strategy ======================
+
+        if MABuyInSignal and gearBuyInSignal:
+            buyInSignal = True
+        else:
+            buyInSignal = False
+
+        if MASellOutSignal and gearSellOutSignal:
+            sellOutSignal = True
+        else:
+            sellOutSignal = False
+
         # 止损
         if positionRatio < -0.03:
             sellOutSignal = True
-
-        if floatPrice(currentPrice) > mean + bollingRadius * standardDeviation: #顶端
-            pass
-        elif floatPrice(currentPrice) > mean - bollingRadius * standardDeviation\
-                and floatPrice(currentPrice) <= mean + bollingRadius * standardDeviation: # 带中
-            pass
-        else: #底部
-            pass
 
         if buyInSignal:
             if not hasFullPosition:
