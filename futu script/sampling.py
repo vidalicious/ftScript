@@ -83,12 +83,15 @@ if connectSocket is not None:
 
         if standardDeviation != 0:
             print "current price is ", str((floatPrice(currentPrice) - mean) / standardDeviation), " standard deviation to mean"
-            log = ["current price is ", str((floatPrice(currentPrice) - mean) / standardDeviation), " standard deviation to mean"]
+            log = ["current price is ", str((floatPrice(currentPrice) - mean) / standardDeviation), " standard deviation to mean\n"]
             file.writelines(log)
         else:
             print "standard deviation is 0"
-            log = "standard deviation is 0"
+            log = "standard deviation is 0\n"
             file.writelines(log)
+
+        log = ["==========================================================================================\n"]
+        file.writelines(log)
 
         file.close()
         counter += 1
