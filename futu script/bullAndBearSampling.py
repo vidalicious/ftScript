@@ -28,12 +28,12 @@ if connectSocket is not None:
 
         bullPrice = getCurrentPrice(connectSocket, bullCode)
         print "bull ", bullCode, " current price ", floatPrice(bullPrice)
-        log = ["bull ", bullCode, " current price ", floatPrice(bullPrice), "\n"]
+        log = ["bull ", bullCode, " current price ", str(floatPrice(bullPrice)), "\n"]
         file.writelines(log)
 
         bearPrice = getCurrentPrice(connectSocket, bearCode)
         print "bear ", bearCode, " current price ", floatPrice(bearPrice)
-        log = ["bear ", bearCode, " current price ", floatPrice(bearPrice), "\n"]
+        log = ["bear ", bearCode, " current price ", str(floatPrice(bearPrice)), "\n"]
         file.writelines(log)
 
         log = ["==========================================================================================\n"]
