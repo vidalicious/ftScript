@@ -36,6 +36,88 @@ if connectSocket is not None:
         log = ["bear ", bearCode, " current price ", str(floatPrice(bearPrice)), "\n"]
         file.writelines(log)
 
+        # ========================== bull ================================
+        print "----------- bull gear -----------"
+        log = ["----------- bull gear -----------", "\n"]
+        file.writelines(log)
+
+        gearArr = getGearData(connectSocket, bullCode, 10)
+
+        buyOrder = []
+        buyPrice = []
+        buyVol = []
+
+        sellOrder = []
+        sellPrice = []
+        sellVol = []
+
+        if gearArr is not None:
+            for gear in gearArr:
+                buyOrder.append(gear["BuyOrder"])
+                buyPrice.append(gear["BuyPrice"])
+                buyVol.append(gear["BuyVol"])
+
+                sellOrder.append(gear["SellOrder"])
+                sellPrice.append(gear["SellPrice"])
+                sellVol.append(gear["SellVol"])
+
+        if buyPrice is not None:
+            for i in range(len(sellPrice))[::-1]:
+                print "sell ", i + 1, " order ", sellOrder[i], " price ", floatPrice(sellPrice[i]), " vol ", sellVol[i]
+                log = ["sell ", str(i + 1), " order ", sellOrder[i], " price ", str(floatPrice(sellPrice[i])), " vol ", sellVol[i], "\n"]
+                file.writelines(log)
+
+            print "-- mid gear price ", (floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2
+            log = ["-- mid gear price ", str((floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2), "\n"]
+            file.writelines(log)
+
+            for i in range(len(buyPrice)):
+                print "buy ", i + 1, " order ", buyOrder[i], " price ", floatPrice(buyPrice[i]), " vol ", buyVol[i]
+                log = ["buy ", str(i + 1), " order ", buyOrder[i], " price ", str(floatPrice(buyPrice[i])), " vol ", buyVol[i], "\n"]
+                file.writelines(log)
+
+
+        # ================= bear ===================
+        print "----------- bear gear -----------"
+        log = ["----------- bear gear -----------", "\n"]
+        file.writelines(log)
+
+        gearArr = getGearData(connectSocket, bearCode, 10)
+
+        buyOrder = []
+        buyPrice = []
+        buyVol = []
+
+        sellOrder = []
+        sellPrice = []
+        sellVol = []
+
+        if gearArr is not None:
+            for gear in gearArr:
+                buyOrder.append(gear["BuyOrder"])
+                buyPrice.append(gear["BuyPrice"])
+                buyVol.append(gear["BuyVol"])
+
+                sellOrder.append(gear["SellOrder"])
+                sellPrice.append(gear["SellPrice"])
+                sellVol.append(gear["SellVol"])
+
+        if buyPrice is not None:
+            for i in range(len(sellPrice))[::-1]:
+                print "sell ", i + 1, " order ", sellOrder[i], " price ", floatPrice(sellPrice[i]), " vol ", sellVol[i]
+                log = ["sell ", str(i + 1), " order ", sellOrder[i], " price ", str(floatPrice(sellPrice[i])), " vol ", sellVol[i], "\n"]
+                file.writelines(log)
+
+            print "-- mid gear price ", (floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2
+            log = ["-- mid gear price ", str((floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2), "\n"]
+            file.writelines(log)
+
+            for i in range(len(buyPrice)):
+                print "buy ", i + 1, " order ", buyOrder[i], " price ", floatPrice(buyPrice[i]), " vol ", buyVol[i]
+                log = ["buy ", str(i + 1), " order ", buyOrder[i], " price ", str(floatPrice(buyPrice[i])), " vol ", buyVol[i], "\n"]
+                file.writelines(log)
+
+
         log = ["==========================================================================================\n"]
         file.writelines(log)
 
