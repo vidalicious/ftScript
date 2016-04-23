@@ -147,16 +147,24 @@ def simu_inquireOrder(connectSocket):
 def updateCookie():
 	global COOKIE
 	COOKIE += 1
-	print "cookie ", COOKIE
 
 def floatPrice(price):
     return float(price) / 1000
 
-def getAveragePriceFromList(list):
+def getMeanFromList(list):
 	total = 0
 	if list is not None:
 		for price in list:
 			total += price
+		return total / len(list)
+	else:
+		return 0
+
+def getVarianceFromList(list, mean):
+	total = 0
+	if list is not None:
+		for i in list:
+			total += (i - mean) ** 2
 		return total / len(list)
 	else:
 		return 0

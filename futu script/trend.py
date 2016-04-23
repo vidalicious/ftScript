@@ -114,11 +114,11 @@ if connectSocket is not None:
         if len(longTickList) > longMovingTicks:
             longTickList = longTickList[:longMovingTicks]
 
-        shortMAList.insert(0, getAveragePriceFromList(shortTickList))
+        shortMAList.insert(0, getMeanFromList(shortTickList))
         if len(shortMAList) > 5:
             shortMAList = shortMAList[:5]
 
-        longMAList.insert(0, getAveragePriceFromList(longTickList))
+        longMAList.insert(0, getMeanFromList(longTickList))
         if len(longMAList) > 5:
             longMAList = longMAList[:5]
 
