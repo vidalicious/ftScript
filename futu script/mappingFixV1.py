@@ -8,8 +8,8 @@ from math import *
 # 恒指瑞银七六牛K.C    65319   10000
 # 恒指瑞银六七熊T.P    65281   10000
 
-# macd
-# ==================== config =========================
+# price = k * target + b
+# ================ config =================
 oneTickTime = 1
 
 host = "localhost"
@@ -20,22 +20,19 @@ bullCode = "65319"
 bearCode = "65281"
 tradeOneHand = 10000
 
-ema1Count = 60 / oneTickTime # 1分钟的tick数
-ema5Count = 60 * 5 / oneTickTime #5分钟tick
+emaCount = 60 / oneTickTime
 windowCount = 60
-# =========================================================
+
+# ============================================
 counter = 0
 
-targetList = []
+meanTarget = 0
+meanBull = 0
 
-mean1 = 0
-mean5 = 0
+ema_K = float(2 / (emaCount + 1))
 
-ema1_K = float(2 / (ema1Count + 1))
-ema5_K = float(2 / (ema5Count + 1))
-
-mean1List = []
-mean5List = []
+meanTargetList = []
+meanBullList = []
 
 bullTrend_buySignal = False
 bullTrend_sellSignal = False
@@ -46,54 +43,63 @@ bullSellSignal = False
 
 pathTag = []
 
-# ==========================================================
+# ===========================================================
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
         file = open("bullAndBearLog", "a+")
+
         # ============== inquire position =====================
         positionArr = simu_inquirePosition(connectSocket)
-        # ========== moving average ================
+
+        # ============== mapping ========================
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
 
-        targetList.insert(0, floatPrice(currentTarget))
-        if len(targetList) > windowCount:
-            targetList = targetList[:windowCount]
-
-        if mean1 != 0:
-            mean1 = floatPrice(currentTarget) * ema1_K + mean1 * (1 - ema1_K)
+        if meanTarget != 0:
+            meanTarget = floatPrice(currentTarget) * ema_K + meanTarget * (1 - ema_K)
         else:
-            mean1 = floatPrice(currentTarget)
-        mean1List.insert(0, mean1)
-        if len(mean1List) > windowCount:
-            mean1List = mean1List[:windowCount]
+            meanTarget = floatPrice(currentTarget)
 
-        if mean5 != 0:
-            mean5 = floatPrice(currentTarget) * ema5_K + mean5 * (1 - ema5_K)
+        meanTargetList.insert(0, meanTarget)
+        if len(meanTargetList) > windowCount:
+            meanTargetList = meanTargetList[:windowCount]
+
+        currentBullPrice = getCurrentPrice(connectSocket, bullCode)
+        print "bull ", str(floatPrice(currentBullPrice))
+
+        if meanBull != 0:
+            meanBull = floatPrice(currentBullPrice) * ema_K + meanBull * (1 - ema_K)
         else:
-            mean5 = floatPrice(currentTarget)
-        mean5List.insert(0, mean5)
-        if len(mean5List) > windowCount:
-            mean5List = mean5List[:windowCount]
+            meanBull = floatPrice(currentBullPrice)
 
-        if counter > ema1Count:
-            if mean1 < mean5:
-                if mean1 > mean1List[1]: #ema1斜率向上
-                    bullTrend_buySignal = True
-                    pathTag.append(" 1 ")
+        meanBullList.insert(0, meanBull)
+        if len(meanBullList) > windowCount:
+            meanBullList = meanBullList[:windowCount]
+
+        if counter > emaCount:
+            x1 = meanTarget
+            y1 = meanBull
+            x2 = meanTargetList[-1]
+            y2 = meanBullList[-1]
+
+            para_k = 0
+            para_b = 0
+            if x1 != x2:
+                para_k = (y1 - y2) / (x1 - x2)
+                para_b = ((x1 * y2) - (x2 * y1)) / (x1 - x2)
             else:
-                if mean1 < mean1List[1]: #斜率向下
-                    bullTrend_sellSignal = True
-                    pathTag.append(" 2 ")
+                para_k = y1 / x1
+                para_b = 0
 
-            if mean1 > mean5 and mean1List[1] < mean5List[1]: #ema1 向上穿越ema5
+            numericalBullPrice = floatPrice(currentTarget) * para_k + para_b
+
+            if floatPrice(currentBullPrice) < numericalBullPrice:
                 bullTrend_buySignal = True
-                pathTag.append(" 3 ")
-
-            if mean1 < mean5 and mean1List[1] > mean5List[1]: #向下穿越
+                pathTag.append(" 1 ")
+            elif floatPrice(currentBullPrice) > numericalBullPrice:
                 bullTrend_sellSignal = True
-                pathTag.append(" 4 ")
+                pathTag.append(" 2 ")
 
             bullGearArr = getGearData(connectSocket, bullCode, 1)
             if bullGearArr is not None:
@@ -104,23 +110,23 @@ if connectSocket is not None:
 
                 if bullBuy1Vol / bullSell1Vol > 15:
                     bullGear_buySignal = True
-                    pathTag.append(" 5 ")
+                    pathTag.append(" 3 ")
                 elif bullSell1Vol / bullBuy1Vol > 15:
                     bullGear_sellSignal = True
-                    pathTag.append(" 6 ")
+                    pathTag.append(" 4 ")
 
             hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
             bullPositionRatio = getPositionRatio(positionArr, bullCode)
 
             if bullTrend_buySignal and bullGear_buySignal:
                 bullBuySignal = True
-                pathTag.append(" 7 ")
+                pathTag.append(" 5 ")
             if bullTrend_sellSignal:
                 bullSellSignal = True
-                pathTag.append(" 8 ")
-            if bullPositionRatio < -0.03: #止损
+                pathTag.append(" 6 ")
+            if bullPositionRatio < -0.03:  # 止损
                 bullSellSignal = True
-                pathTag.append(" 9 ")
+                pathTag.append(" 7 ")
 
             if bullBuySignal:
                 if not hasBullPosition:
@@ -166,7 +172,7 @@ if connectSocket is not None:
                         pathTag.append("\n")
                         file.writelines(pathTag)
 
-        # ======== update =============
+        # ======== update ==============
         file.close()
         counter += 1
 
