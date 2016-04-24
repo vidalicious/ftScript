@@ -138,7 +138,7 @@ if connectSocket is not None:
                     if not hasBuyOrder:  # 如果没有未成交合适订单则下单
                         localID = simu_commonBuyOrder(connectSocket, currentBullPrice, tradeOneHand, bullCode)
                         print "buy bull", bullCode, " at ", floatPrice(currentBullPrice), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID
-                        logger = ["buy bull", bullCode, " at ", floatPrice(currentBullPrice), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "\n"]
+                        logger = ["buy bull", bullCode, " at ", str(floatPrice(currentBullPrice)), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "\n"]
                         file.writelines(logger)
                         pathTag.append("\n")
                         file.writelines(pathTag)
@@ -160,7 +160,7 @@ if connectSocket is not None:
                     if not hasSellOrder:
                         localID = simu_commonSellOrder(connectSocket, currentBullPrice, tradeOneHand, bullCode)
                         print "sell bull ", bullCode, " at ", floatPrice(currentBullPrice), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID
-                        logger = ["sell bull ", bullCode, " at ", floatPrice(currentBullPrice), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "\n"]
+                        logger = ["sell bull ", bullCode, " at ", str(floatPrice(currentBullPrice)), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "\n"]
                         file.writelines(logger)
                         pathTag.append("\n")
                         file.writelines(pathTag)
