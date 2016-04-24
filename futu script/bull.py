@@ -34,6 +34,8 @@ variance = 0
 # 标准差
 standardDeviation = 0
 
+EMA_K = float(2 / (movingAverageCount + 1))
+
 meanList = []
 
 lastTarget = 0
@@ -71,7 +73,10 @@ if connectSocket is not None:
         if len(targetList) > movingAverageCount:
             targetList = targetList[:movingAverageCount]
 
-        mean = getMeanFromList(targetList)
+        if mean != 0:
+            mean = floatPrice(currentTarget) * EMA_K + mean * (1 - EMA_K)
+        else:
+            mean = floatPrice(currentTarget)
         meanList.insert(0, mean)
         if len(meanList) > movingAverageCount:
             meanList = meanList[:movingAverageCount]

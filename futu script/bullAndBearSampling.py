@@ -27,6 +27,8 @@ variance = 0
 # 标准差
 standardDeviation = 0
 
+EMA_K = float(2 / (movingAverageCount + 1))
+
 maxAwaySD = 0
 
 connectSocket = connect(host, port)
@@ -43,7 +45,10 @@ if connectSocket is not None:
         if len(targetList) > movingAverageCount:
             targetList = targetList[:movingAverageCount]
 
-        mean = getMeanFromList(targetList)
+        if mean != 0:
+            mean = floatPrice(currentTarget) * EMA_K + mean * (1 - EMA_K)
+        else:
+            mean = floatPrice(currentTarget)
         variance = getVarianceFromList(targetList, mean)
         standardDeviation = sqrt(variance)
         if standardDeviation == 0:
