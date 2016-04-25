@@ -77,23 +77,29 @@ if connectSocket is not None:
         if len(mean5List) > windowCount:
             mean5List = mean5List[:windowCount]
 
+        print "mean1 ", str(mean1), " mean5 ", str(mean5)
+
         if counter > ema1Count:
             if mean1 < mean5:
                 if mean1 > mean1List[5]: #ema1斜率向上
                     bullTrend_buySignal = True
                     pathTag.append(" 1 ")
+                    print "a"
             else:
                 if mean1 < mean1List[5]: #斜率向下
                     bullTrend_sellSignal = True
                     pathTag.append(" 2 ")
+                    print "b"
 
             if mean1 > mean5 and mean1List[5] < mean5List[5]: #ema1 向上穿越ema5
                 bullTrend_buySignal = True
                 pathTag.append(" 3 ")
+                print "c"
 
             if mean1 < mean5 and mean1List[5] > mean5List[5]: #向下穿越
                 bullTrend_sellSignal = True
                 pathTag.append(" 4 ")
+                print "d"
 
             # bullGearArr = getGearData(connectSocket, bullCode, 1)
             # if bullGearArr is not None:
