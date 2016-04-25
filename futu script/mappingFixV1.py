@@ -77,6 +77,18 @@ if connectSocket is not None:
         if len(meanBullList) > windowCount:
             meanBullList = meanBullList[:windowCount]
 
+        # ====== 即使了结 ======
+        hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
+        positionPrice = getPositionPrice(positionArr, bullCode)
+        if hasBullPosition and floatPrice(currentBullPrice) > floatPrice(positionPrice):
+            localID = simu_commonSellOrder(connectSocket, currentBullPrice, tradeOneHand, bullCode)
+            print "sell bull ", bullCode, " at ", floatPrice(currentBullPrice), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID
+            logger = ["sell bull ", bullCode, " at ", str(floatPrice(currentBullPrice)), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "\n"]
+            file.writelines(logger)
+            pathTag.extend([" end it ", "\n"])
+            file.writelines(pathTag)
+
+
         if counter > emaCount:
             x1 = meanTarget
             y1 = meanBull
