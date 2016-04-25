@@ -8,7 +8,7 @@ from math import *
 # 恒指瑞银七六牛K.C    65319   10000
 # 恒指瑞银六七熊T.P    65281   10000
 
-# price = k * target + b
+# 超高频fix 及时end
 # ================ config =================
 oneTickTime = 1
 
@@ -77,7 +77,7 @@ if connectSocket is not None:
         if len(meanBullList) > windowCount:
             meanBullList = meanBullList[:windowCount]
 
-        # ====== 即使了结 ======
+        # ====== 及时了结 ======
         hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
         positionPrice = getPositionPrice(positionArr, bullCode)
         if hasBullPosition and floatPrice(currentBullPrice) > floatPrice(positionPrice):
@@ -102,55 +102,39 @@ if connectSocket is not None:
 
 
         if counter > emaCount:
-            x1 = meanTarget
-            y1 = meanBull
-            x2 = meanTargetList[-1]
-            y2 = meanBullList[-1]
-
-            para_k = 0
-            para_b = 0
-            if x1 != x2:
-                para_k = (y1 - y2) / (x1 - x2)
-                para_b = ((x1 * y2) - (x2 * y1)) / (x1 - x2)
-            else:
-                para_k = y1 / x1
-                para_b = 0
-
-            numericalBullPrice = floatPrice(currentTarget) * para_k + para_b
-
-            if floatPrice(currentBullPrice) < numericalBullPrice:
+            if meanTarget > meanTargetList[-1]:
                 bullTrend_buySignal = True
                 pathTag.append(" 1 ")
                 print "a"
-            elif floatPrice(currentBullPrice) > numericalBullPrice:
+            elif meanTarget < meanTargetList[-1]:
                 bullTrend_sellSignal = True
                 pathTag.append(" 2 ")
                 print "b"
 
-            bullGearArr = getGearData(connectSocket, bullCode, 1)
-            if bullGearArr is not None:
-                bullBuy1Price = floatPrice(bullGearArr[0]["BuyPrice"])
-                bullBuy1Vol = float(bullGearArr[0]["BuyVol"])
-                bullSell1Price = floatPrice(bullGearArr[0]["SellPrice"])
-                bullSell1Vol = float(bullGearArr[0]["SellVol"])
-
-                if bullBuy1Vol / bullSell1Vol > 5:
-                    bullGear_buySignal = True
-                    pathTag.append(" 3 ")
-                elif bullSell1Vol / bullBuy1Vol > 5:
-                    bullGear_sellSignal = True
-                    pathTag.append(" 4 ")
+            # bullGearArr = getGearData(connectSocket, bullCode, 1)
+            # if bullGearArr is not None:
+            #     bullBuy1Price = floatPrice(bullGearArr[0]["BuyPrice"])
+            #     bullBuy1Vol = float(bullGearArr[0]["BuyVol"])
+            #     bullSell1Price = floatPrice(bullGearArr[0]["SellPrice"])
+            #     bullSell1Vol = float(bullGearArr[0]["SellVol"])
+            #
+            #     if bullBuy1Vol / bullSell1Vol > 5:
+            #         bullGear_buySignal = True
+            #         pathTag.append(" 3 ")
+            #     elif bullSell1Vol / bullBuy1Vol > 5:
+            #         bullGear_sellSignal = True
+            #         pathTag.append(" 4 ")
 
             hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
             bullPositionRatio = getPositionRatio(positionArr, bullCode)
 
-            if bullTrend_buySignal and bullGear_buySignal:
+            if bullTrend_buySignal:
                 bullBuySignal = True
                 pathTag.append(" 5 ")
             if bullTrend_sellSignal:
                 bullSellSignal = True
                 pathTag.append(" 6 ")
-            if bullPositionRatio < -0.03:  # 止损
+            if hasBullPosition and bullPositionRatio < -0.03:  # 止损
                 bullSellSignal = True
                 pathTag.append(" 7 ")
 

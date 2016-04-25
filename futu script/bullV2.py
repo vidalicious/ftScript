@@ -124,7 +124,7 @@ if connectSocket is not None:
             if bullTrend_sellSignal:
                 bullSellSignal = True
                 pathTag.append(" 8 ")
-            if bullPositionRatio < -0.03: #止损
+            if hasBullPosition and bullPositionRatio < -0.03: #止损
                 bullSellSignal = True
                 pathTag.append(" 9 ")
 
