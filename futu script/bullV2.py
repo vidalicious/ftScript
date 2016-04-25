@@ -79,40 +79,40 @@ if connectSocket is not None:
 
         if counter > ema1Count:
             if mean1 < mean5:
-                if mean1 > mean1List[1]: #ema1斜率向上
+                if mean1 > mean1List[5]: #ema1斜率向上
                     bullTrend_buySignal = True
                     pathTag.append(" 1 ")
             else:
-                if mean1 < mean1List[1]: #斜率向下
+                if mean1 < mean1List[5]: #斜率向下
                     bullTrend_sellSignal = True
                     pathTag.append(" 2 ")
 
-            if mean1 > mean5 and mean1List[1] < mean5List[1]: #ema1 向上穿越ema5
+            if mean1 > mean5 and mean1List[5] < mean5List[5]: #ema1 向上穿越ema5
                 bullTrend_buySignal = True
                 pathTag.append(" 3 ")
 
-            if mean1 < mean5 and mean1List[1] > mean5List[1]: #向下穿越
+            if mean1 < mean5 and mean1List[5] > mean5List[5]: #向下穿越
                 bullTrend_sellSignal = True
                 pathTag.append(" 4 ")
 
-            bullGearArr = getGearData(connectSocket, bullCode, 1)
-            if bullGearArr is not None:
-                bullBuy1Price = floatPrice(bullGearArr[0]["BuyPrice"])
-                bullBuy1Vol = float(bullGearArr[0]["BuyVol"])
-                bullSell1Price = floatPrice(bullGearArr[0]["SellPrice"])
-                bullSell1Vol = float(bullGearArr[0]["SellVol"])
-
-                if bullBuy1Vol / bullSell1Vol > 15:
-                    bullGear_buySignal = True
-                    pathTag.append(" 5 ")
-                elif bullSell1Vol / bullBuy1Vol > 15:
-                    bullGear_sellSignal = True
-                    pathTag.append(" 6 ")
+            # bullGearArr = getGearData(connectSocket, bullCode, 1)
+            # if bullGearArr is not None:
+            #     bullBuy1Price = floatPrice(bullGearArr[0]["BuyPrice"])
+            #     bullBuy1Vol = float(bullGearArr[0]["BuyVol"])
+            #     bullSell1Price = floatPrice(bullGearArr[0]["SellPrice"])
+            #     bullSell1Vol = float(bullGearArr[0]["SellVol"])
+            #
+            #     if bullBuy1Vol / bullSell1Vol > 15:
+            #         bullGear_buySignal = True
+            #         pathTag.append(" 5 ")
+            #     elif bullSell1Vol / bullBuy1Vol > 15:
+            #         bullGear_sellSignal = True
+            #         pathTag.append(" 6 ")
 
             hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
             bullPositionRatio = getPositionRatio(positionArr, bullCode)
 
-            if bullTrend_buySignal and bullGear_buySignal:
+            if bullTrend_buySignal:
                 bullBuySignal = True
                 pathTag.append(" 7 ")
             if bullTrend_sellSignal:
