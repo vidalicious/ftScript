@@ -81,22 +81,22 @@ if connectSocket is not None:
 
         if counter > ema1Count:
             if mean1 < mean5:
-                if mean1 > mean1List[5]: #ema1斜率向上
+                if mean1 > mean1List[1]: #ema1斜率向上
                     bullTrend_buySignal = True
                     pathTag.append(" 1 ")
                     print "a"
             else:
-                if mean1 < mean1List[5]: #斜率向下
+                if mean1 < mean1List[1]: #斜率向下
                     bullTrend_sellSignal = True
                     pathTag.append(" 2 ")
                     print "b"
 
-            if mean1 > mean5 and mean1List[5] < mean5List[5]: #ema1 向上穿越ema5
+            if mean1 > mean5 and mean1List[1] < mean5List[1]: #ema1 向上穿越ema5
                 bullTrend_buySignal = True
                 pathTag.append(" 3 ")
                 print "c"
 
-            if mean1 < mean5 and mean1List[5] > mean5List[5]: #向下穿越
+            if mean1 < mean5 and mean1List[1] > mean5List[1]: #向下穿越
                 bullTrend_sellSignal = True
                 pathTag.append(" 4 ")
                 print "d"
