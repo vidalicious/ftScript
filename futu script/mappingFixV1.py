@@ -81,12 +81,24 @@ if connectSocket is not None:
         hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
         positionPrice = getPositionPrice(positionArr, bullCode)
         if hasBullPosition and floatPrice(currentBullPrice) > floatPrice(positionPrice):
-            localID = simu_commonSellOrder(connectSocket, currentBullPrice, tradeOneHand, bullCode)
-            print "sell bull ", bullCode, " at ", floatPrice(currentBullPrice), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID
-            logger = ["sell bull ", bullCode, " at ", str(floatPrice(currentBullPrice)), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "\n"]
-            file.writelines(logger)
-            pathTag.extend([" end it ", "\n"])
-            file.writelines(pathTag)
+            hasSellOrder = False
+            orderInfoArr = simu_inquireOrder(connectSocket)
+            if orderInfoArr is not None:
+                for orderInfo in orderInfoArr:
+                    if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
+                        if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == currentBullPrice:
+                            hasSellOrder = True
+                        else:
+                            simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
+                            pathTag.append(" 撤单 ")
+
+            if not hasSellOrder:
+                localID = simu_commonSellOrder(connectSocket, currentBullPrice, tradeOneHand, bullCode)
+                print "sell bull ", bullCode, " at ", floatPrice(currentBullPrice), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID
+                logger = ["sell bull ", bullCode, " at ", str(floatPrice(currentBullPrice)), "time", time.strftime('%Y-%m-%d %H:%M:%S'), "localID", localID, "\n"]
+                file.writelines(logger)
+                pathTag.extend([" end it ", "\n"])
+                file.writelines(pathTag)
 
 
         if counter > emaCount:
