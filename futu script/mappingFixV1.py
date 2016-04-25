@@ -109,9 +109,11 @@ if connectSocket is not None:
             if floatPrice(currentBullPrice) < numericalBullPrice:
                 bullTrend_buySignal = True
                 pathTag.append(" 1 ")
+                print "a"
             elif floatPrice(currentBullPrice) > numericalBullPrice:
                 bullTrend_sellSignal = True
                 pathTag.append(" 2 ")
+                print "b"
 
             bullGearArr = getGearData(connectSocket, bullCode, 1)
             if bullGearArr is not None:
@@ -120,10 +122,10 @@ if connectSocket is not None:
                 bullSell1Price = floatPrice(bullGearArr[0]["SellPrice"])
                 bullSell1Vol = float(bullGearArr[0]["SellVol"])
 
-                if bullBuy1Vol / bullSell1Vol > 15:
+                if bullBuy1Vol / bullSell1Vol > 5:
                     bullGear_buySignal = True
                     pathTag.append(" 3 ")
-                elif bullSell1Vol / bullBuy1Vol > 15:
+                elif bullSell1Vol / bullBuy1Vol > 5:
                     bullGear_sellSignal = True
                     pathTag.append(" 4 ")
 
