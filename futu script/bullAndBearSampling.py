@@ -27,7 +27,7 @@ variance = 0
 # 标准差
 standardDeviation = 0
 
-EMA_K = float(2 / (movingAverageCount + 1))
+EMA_K = float(2.0 / (movingAverageCount + 1))
 
 maxAwaySD = 0
 
