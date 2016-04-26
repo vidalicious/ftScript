@@ -29,7 +29,7 @@ counter = 0
 meanTarget = 0
 meanBull = 0
 
-ema_K = float(2 / (emaCount + 1))
+ema_K = float(2.0 / (emaCount + 1))
 
 meanTargetList = []
 meanBullList = []

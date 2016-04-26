@@ -31,8 +31,8 @@ targetList = []
 mean1 = 0
 mean5 = 0
 
-ema1_K = float(2 / (ema1Count + 1))
-ema5_K = float(2 / (ema5Count + 1))
+ema1_K = float(2.0 / (ema1Count + 1))
+ema5_K = float(2.0 / (ema5Count + 1))
 
 mean1List = []
 mean5List = []
