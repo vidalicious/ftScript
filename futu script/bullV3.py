@@ -102,11 +102,11 @@ if connectSocket is not None:
 
 
         if counter > emaCount:
-            if meanTarget > meanTargetList[-1]:
+            if meanTarget > meanTargetList[1]:
                 bullTrend_buySignal = True
                 pathTag.append(" 1 ")
                 print "a"
-            elif meanTarget < meanTargetList[-1]:
+            elif meanTarget < meanTargetList[1]:
                 bullTrend_sellSignal = True
                 pathTag.append(" 2 ")
                 print "b"
