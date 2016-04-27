@@ -6,8 +6,8 @@ from FSApi import *
 from math import *
 import datetime
 
-# 恒指瑞银七六牛K.C    65319   10000
-# 恒指瑞银六七熊T.P    65281   10000
+# 恒指法兴七六牛B.C    65548   10000
+# 恒指摩通六七熊Z.P    65348   10000
 
 # improved macd
 # ==================== config =========================
@@ -17,7 +17,7 @@ host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "65319"
+bullCode = "65548"
 tradeOneHand = 10000
 
 ema1Count = 60 / oneTickTime # 1分钟的tick数
@@ -32,9 +32,9 @@ mean1 = 0
 mean5 = 0
 
 # 方差
-variance1 = 0
+variance5 = 0
 # 标准差
-standardDeviation1 = 0
+standardDeviation5 = 0
 
 ema1_K = float(2.0 / (ema1Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
@@ -73,8 +73,8 @@ if connectSocket is not None:
         else:
             mean5 = floatPrice(currentTarget)
 
-        variance1 = getVarianceFromList(targetList, mean1)
-        standardDeviation1 = sqrt(variance1)
+        variance5 = getVarianceFromList(targetList, mean5)
+        standardDeviation5 = sqrt(variance5)
 
         print "mean1", str(mean1), " mean5 ", str(mean5)
 
@@ -98,7 +98,7 @@ if connectSocket is not None:
             hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
             bullPositionRatio = getPositionRatio(positionArr, bullCode)
 
-            if standardDeviation1 < 10: # 方差太小，离场
+            if standardDeviation5 < 8: # 方差太小，离场
                 bullSellSignal = True
                 pathTag.append(" small standard deviation ")
                 print "small standard deviation"
