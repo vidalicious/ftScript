@@ -87,6 +87,15 @@ def setOrderStatus(connectSocket, envType, localID, orderID, setStatus):
 
 	return setStatusSuccess
 
+def changeOrder(connectSocket, envType, localID, orderID, price, quantity):
+	global COOKIE
+	requestPara = {"Cookie": str(COOKIE), "EnvType": str(envType), "LocalID": str(localID), "OrderID": str(orderID), "Price": str(price), "Qty": str(quantity)}
+	updateCookie()
+	response = FSSender.send_req_and_get_rsp(connectSocket, "6005", requestPara, 1)
+	if int(response[0]["ErrCode"]) == 0:
+		print "change order success"
+	else:
+		print response[0]["ErrDesc"]
 
 def inquirePosition(connectSocket, envType):
 	global COOKIE
@@ -124,6 +133,9 @@ def simu_placeOrder(connectSocket, orderSide, orderType, price, quality, stockCo
 
 def simu_setOrderStatus(connectSocket, localID, orderID, setStatus):
 	return setOrderStatus(connectSocket, 1, localID, orderID, setStatus)
+
+def simu_changeOrder(connectSocket, localID, orderID, price, quantity):
+	return changeOrder(connectSocket, 1, localID, orderID, price, quantity)
 
 def simu_inquirePosition(connectSocket):
 	return inquirePosition(connectSocket, 1)

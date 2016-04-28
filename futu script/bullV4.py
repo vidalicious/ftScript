@@ -6,7 +6,7 @@ from FSApi import *
 from math import *
 import datetime
 
-# 恒指法兴七六牛B.C    65548   10000
+# 恒指瑞银七九牛N.C    65701   10000
 # 恒指摩通六七熊Z.P    65348   10000
 
 # improved macd
@@ -17,7 +17,7 @@ host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "65548"
+bullCode = "65701"
 tradeOneHand = 10000
 
 ema1Count = 60 / oneTickTime # 1分钟的tick数
@@ -45,7 +45,7 @@ bullGear_buySignal = False
 bullGear_sellSignal = False
 bullBuySignal = False
 bullSellSignal = False
-lessThanSmallSDTag = False # < small
+
 moreThanLargeSDTag = False # > large
 
 pathTag = []
@@ -102,7 +102,6 @@ if connectSocket is not None:
 
             if standardDeviation5 < 8: # 方差太小，离场
                 bullSellSignal = True
-                lessThanSmallSDTag = True
                 pathTag.append(" small standard deviation ")
                 print "small standard deviation"
             elif datetime.datetime.now().time() > datetime.time(15, 58, 0): # 倒数2分钟，离场
@@ -138,11 +137,16 @@ if connectSocket is not None:
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
                             if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
-                                if orderInfo["OrderSide"] == "0" and orderInfo["Price"] == tradePrice:
+                                if orderInfo["OrderSide"] == "0":
                                     hasBuyOrder = True
+                                    if orderInfo["Price"] == tradePrice:
+                                        pass
+                                    else:
+                                        # 价格不对修改订单
+                                        simu_changeOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, tradeOneHand)
                                 else:
                                     simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
-                                    pathTag.append(" 撤单 ")
+                                    pathTag.append(" 撤卖单 ")
 
                     if not hasBuyOrder:  # 如果没有未成交合适订单则下单
                         localID = simu_commonBuyOrder(connectSocket, tradePrice, tradeOneHand, bullCode)
@@ -164,11 +168,16 @@ if connectSocket is not None:
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
                             if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
-                                if orderInfo["OrderSide"] == "1" and orderInfo["Price"] == tradePrice:
+                                if orderInfo["OrderSide"] == "1":
                                     hasSellOrder = True
+                                    if orderInfo["Price"] == tradePrice:
+                                        pass
+                                    else:
+                                        # 价格不对修改订单
+                                        simu_changeOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, tradeOneHand)
                                 else:
                                     simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
-                                    pathTag.append(" 撤单 ")
+                                    pathTag.append(" 撤买单 ")
 
                     if not hasSellOrder:
                         localID = simu_commonSellOrder(connectSocket, tradePrice, tradeOneHand, bullCode)
@@ -188,7 +197,6 @@ if connectSocket is not None:
         bullGear_sellSignal = False
         bullBuySignal = False
         bullSellSignal = False
-        lessThanSmallSDTag = False
         moreThanLargeSDTag = False
         pathTag = []
 
