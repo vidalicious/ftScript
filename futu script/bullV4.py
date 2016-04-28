@@ -143,7 +143,7 @@ if connectSocket is not None:
                                         pass
                                     else:
                                         # 价格不对修改订单
-                                        simu_changeOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, tradeOneHand)
+                                        simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, tradeOneHand)
                                 else:
                                     simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
                                     pathTag.append(" 撤卖单 ")
@@ -174,7 +174,7 @@ if connectSocket is not None:
                                         pass
                                     else:
                                         # 价格不对修改订单
-                                        simu_changeOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, tradeOneHand)
+                                        simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, tradeOneHand)
                                 else:
                                     simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
                                     pathTag.append(" 撤买单 ")
