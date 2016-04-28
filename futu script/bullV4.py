@@ -45,7 +45,8 @@ bullGear_buySignal = False
 bullGear_sellSignal = False
 bullBuySignal = False
 bullSellSignal = False
-smallSDTag = False
+lessThanSmallSDTag = False # < small
+moreThanLargeSDTag = False # > large
 
 pathTag = []
 
@@ -101,7 +102,7 @@ if connectSocket is not None:
 
             if standardDeviation5 < 8: # 方差太小，离场
                 bullSellSignal = True
-                smallSDTag = True
+                lessThanSmallSDTag = True
                 pathTag.append(" small standard deviation ")
                 print "small standard deviation"
             elif datetime.datetime.now().time() > datetime.time(15, 58, 0): # 倒数2分钟，离场
@@ -122,11 +123,18 @@ if connectSocket is not None:
                     pathTag.append(" 9 ")
                     print "e"
 
+            if standardDeviation5 > 20:
+                moreThanLargeSDTag = True
+
             if bullBuySignal:
                 if not hasBullPosition:
                     hasBuyOrder = False
                     orderInfoArr = simu_inquireOrder(connectSocket)
-                    tradePrice = bullSell1Price #卖1价
+                    tradePrice = ""
+                    if moreThanLargeSDTag: # 小标准差跟现价,否则跟买卖盘
+                        tradePrice = bullSell1Price
+                    else:
+                        tradePrice = getCurrentPrice(connectSocket, bullCode)
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
                             if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
@@ -149,10 +157,10 @@ if connectSocket is not None:
                     hasSellOrder = False
                     orderInfoArr = simu_inquireOrder(connectSocket)
                     tradePrice = ""
-                    if smallSDTag: # 小标准差离场,跟现价,否则跟买1
-                        tradePrice = getCurrentPrice(connectSocket, bullCode)
-                    else:
+                    if moreThanLargeSDTag: # 小标准差跟现价,否则跟买卖盘
                         tradePrice = bullBuy1Price
+                    else:
+                        tradePrice = getCurrentPrice(connectSocket, bullCode)
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
                             if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
@@ -180,7 +188,8 @@ if connectSocket is not None:
         bullGear_sellSignal = False
         bullBuySignal = False
         bullSellSignal = False
-        smallSDTag = False
+        lessThanSmallSDTag = False
+        moreThanLargeSDTag = False
         pathTag = []
 
         time.sleep(oneTickTime)
