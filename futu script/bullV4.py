@@ -45,6 +45,7 @@ bullGear_buySignal = False
 bullGear_sellSignal = False
 bullBuySignal = False
 bullSellSignal = False
+smallSDTag = False
 
 pathTag = []
 
@@ -100,6 +101,7 @@ if connectSocket is not None:
 
             if standardDeviation5 < 8: # 方差太小，离场
                 bullSellSignal = True
+                smallSDTag = True
                 pathTag.append(" small standard deviation ")
                 print "small standard deviation"
             elif datetime.datetime.now().time() > datetime.time(15, 58, 0): # 倒数2分钟，离场
@@ -146,7 +148,11 @@ if connectSocket is not None:
                 if hasBullPosition:
                     hasSellOrder = False
                     orderInfoArr = simu_inquireOrder(connectSocket)
-                    tradePrice = bullBuy1Price
+                    tradePrice = ""
+                    if smallSDTag: # 小标准差离场,跟现价,否则跟买1
+                        tradePrice = getCurrentPrice(connectSocket, bullCode)
+                    else:
+                        tradePrice = bullBuy1Price
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
                             if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
@@ -174,6 +180,7 @@ if connectSocket is not None:
         bullGear_sellSignal = False
         bullBuySignal = False
         bullSellSignal = False
+        smallSDTag = False
         pathTag = []
 
         time.sleep(oneTickTime)
