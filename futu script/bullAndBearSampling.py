@@ -16,18 +16,24 @@ bearCode = "65281"
 oneTickTime = 1
 counter = 0
 
-movingAverageCount = 60 / oneTickTime # 1分钟的tick数
-
+ema1Count = 60 / oneTickTime # 1分钟的tick数
+ema5Count = 60 * 5 / oneTickTime #5分钟tick
+windowCount = 60
 targetList = []
 
-# 均值
-mean = 0
-# 方差
-variance = 0
-# 标准差
-standardDeviation = 0
+mean1 = 0
+mean5 = 0
 
-EMA_K = float(2.0 / (movingAverageCount + 1))
+variance1 = 0
+# 标准差
+standardDeviation1 = 0
+
+variance5 = 0
+# 标准差
+standardDeviation5 = 0
+
+ema1_K = float(2.0 / (ema1Count + 1))
+ema5_K = float(2.0 / (ema5Count + 1))
 
 maxAwaySD = 0
 
@@ -42,26 +48,34 @@ if connectSocket is not None:
         file.writelines(logger)
 
         targetList.insert(0, floatPrice(currentTarget))
-        if len(targetList) > movingAverageCount:
-            targetList = targetList[:movingAverageCount]
+        if len(targetList) > windowCount:
+            targetList = targetList[:windowCount]
 
-        if mean != 0:
-            mean = floatPrice(currentTarget) * EMA_K + mean * (1 - EMA_K)
+        if mean1 != 0:
+            mean1 = floatPrice(currentTarget) * ema1_K + mean1 * (1 - ema1_K)
         else:
-            mean = floatPrice(currentTarget)
-        variance = getVarianceFromList(targetList, mean)
-        standardDeviation = sqrt(variance)
-        if standardDeviation == 0:
-            awaySD = 0
+            mean1 = floatPrice(currentTarget)
+
+        if mean5 != 0:
+            mean5 = floatPrice(currentTarget) * ema5_K + mean5 * (1 - ema5_K)
         else:
-            awaySD = (floatPrice(currentTarget) - mean) / standardDeviation
-        print "mean ", str(mean), " standard deviation ", str(standardDeviation), " current target to mean ", str(awaySD), " SD away"
-        logger = ["mean ", str(mean), " standard deviation ", str(standardDeviation), " current target to mean ", str(awaySD), " SD away", "\n"]
+            mean5 = floatPrice(currentTarget)
+
+        variance1 = getVarianceFromList(targetList, mean1)
+        standardDeviation1 = sqrt(variance1)
+
+        variance5 = getVarianceFromList(targetList, mean5)
+        standardDeviation5 = sqrt(variance5)
+        # if standardDeviation == 0:
+        #     awaySD = 0
+        # else:
+        #     awaySD = (floatPrice(currentTarget) - mean) / standardDeviation
+        print "mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1)
+        logger = ["mean ", str(mean1), " standard deviation ", str(standardDeviation1), "\n"]
         file.writelines(logger)
-        if awaySD > maxAwaySD:
-            maxAwaySD = awaySD
-        print "max away SD ", str(maxAwaySD)
-        logger = ["max away SD ", str(maxAwaySD), "\n"]
+
+        print "mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5)
+        logger = ["mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5), "\n"]
         file.writelines(logger)
 
         bullPrice = getCurrentPrice(connectSocket, bullCode)
