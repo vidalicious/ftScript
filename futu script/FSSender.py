@@ -27,16 +27,31 @@ def send_req_and_get_rsp(socket_futu_api, protocol_code, req_param, protocol_ver
 	except socket.timeout:
 		return
 
-	socket_futu_api.settimeout(3)
-	buf_size = 1024#50
+	buf_size = 16384
 	#收包
-	rsp_str = ""
-	while True:
-		buf = socket_futu_api.recv(int(buf_size))
-		rsp_str += buf
-		if(len(buf) < int(buf_size)):
-			break
-
+	rsp_str = socket_futu_api.recv(int(buf_size))
 	#回包josn解析
 	return json_analyze_rsps(rsp_str)
+
+# def send_req_and_get_rsp(socket_futu_api, protocol_code, req_param, protocol_version):
+# 	#发包
+# 	try:
+# 		req = {"Protocol":str(protocol_code), "ReqParam":req_param, "Version":str(protocol_version)}
+# 		req_str = json.dumps(req) + "\r\n"
+# 		socket_futu_api.send(req_str)
+# 	except socket.timeout:
+# 		return
+#
+# 	socket_futu_api.settimeout(3)
+# 	buf_size = 1024#50
+# 	#收包
+# 	rsp_str = ""
+# 	while True:
+# 		buf = socket_futu_api.recv(int(buf_size))
+# 		rsp_str += buf
+# 		if(len(buf) < int(buf_size)):
+# 			break
+#
+# 	#回包josn解析
+# 	return json_analyze_rsps(rsp_str)
 
