@@ -21,6 +21,7 @@ port = 11111
 
 targetCode = "800000" # 恒指
 bullCode = "65701"
+bullRecyclePrice = 20800
 tradeOneHand = 10000
 
 ema1Count = 60 / oneTickTime # 1分钟的tick数
@@ -116,7 +117,11 @@ if connectSocket is not None:
             hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
             bullPositionRatio = getPositionRatio(positionArr, bullCode)
 
-            if standardDeviation5 < 8: # 方差太小，离场
+            if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
+                bullSellSignal = True
+                pathTag.append(" too near recycle price ")
+                print "too near recycle price"
+            elif standardDeviation5 < 8: # 方差太小，离场
                 bullSellSignal = True
                 pathTag.append(" small standard deviation ")
                 print "small standard deviation"
@@ -152,7 +157,7 @@ if connectSocket is not None:
                         tradePrice = getCurrentPrice(connectSocket, bullCode)
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
-                            if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
+                            if orderInfo["StockCode"] == bullCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
                                 if orderInfo["OrderSide"] == "0":
                                     hasBuyOrder = True
                                     if orderInfo["Price"] == tradePrice:
@@ -183,7 +188,7 @@ if connectSocket is not None:
                         tradePrice = getCurrentPrice(connectSocket, bullCode)
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
-                            if orderInfo["StockCode"] == bullCode and orderInfo["Status"] == "1":
+                            if orderInfo["StockCode"] == bullCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
                                 if orderInfo["OrderSide"] == "1":
                                     hasSellOrder = True
                                     if orderInfo["Price"] == tradePrice:
