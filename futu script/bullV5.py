@@ -7,10 +7,10 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞银七九牛N.C    65701   10000
+# 恒指瑞银七九牛N.C    65701   10000   20800
 # 恒指摩通六七熊Z.P    65348   10000
 
-# 恒指摩通六九牛C.C    65975   10000
+# 恒指瑞银七六牛    65321   10000  20400
 
 # improved macd + thread
 # ==================== config =========================

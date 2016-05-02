@@ -181,6 +181,15 @@ def getVarianceFromList(list, mean):
 	else:
 		return 0
 
+def getAverageBiasFromList(list, mean):
+	total = 0
+	if list is not None:
+		for i in list:
+			total += (i - mean)
+		return total / len(list)
+	else:
+		return 0
+
 # 	是否有关于该股票的仓位
 def ifHasPositon(positionArr, quality, stockCode):
 	hasPosition = False

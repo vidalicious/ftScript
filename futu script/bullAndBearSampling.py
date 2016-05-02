@@ -35,6 +35,9 @@ standardDeviation5 = 0
 ema1_K = float(2.0 / (ema1Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
 
+averageBias1 = 0
+averageBias5 = 0
+
 maxAwaySD = 0
 
 connectSocket = connect(host, port)
@@ -66,27 +69,27 @@ if connectSocket is not None:
 
         variance5 = getVarianceFromList(targetList, mean5)
         standardDeviation5 = sqrt(variance5)
-        # if standardDeviation == 0:
-        #     awaySD = 0
-        # else:
-        #     awaySD = (floatPrice(currentTarget) - mean) / standardDeviation
-        print "mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1)
-        logger = ["mean ", str(mean1), " standard deviation ", str(standardDeviation1), "\n"]
+
+        averageBias1 = getAverageBiasFromList(targetList, mean1)
+        averageBias5 = getAverageBiasFromList(targetList, mean5)
+
+        print "mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1), " average bias1 ", str(averageBias1)
+        logger = ["mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1), " average bias1 ", str(averageBias1), "\n"]
         file.writelines(logger)
 
-        print "mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5)
-        logger = ["mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5), "\n"]
+        print "mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5), " average bias5 ", str(averageBias5)
+        logger = ["mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5), " average bias5 ", str(averageBias5), "\n"]
         file.writelines(logger)
 
-        bullPrice = getCurrentPrice(connectSocket, bullCode)
-        print "bull ", bullCode, " current price ", floatPrice(bullPrice)
-        logger = ["bull ", bullCode, " current price ", str(floatPrice(bullPrice)), "\n"]
-        file.writelines(logger)
-
-        bearPrice = getCurrentPrice(connectSocket, bearCode)
-        print "bear ", bearCode, " current price ", floatPrice(bearPrice)
-        logger = ["bear ", bearCode, " current price ", str(floatPrice(bearPrice)), "\n"]
-        file.writelines(logger)
+        # bullPrice = getCurrentPrice(connectSocket, bullCode)
+        # print "bull ", bullCode, " current price ", floatPrice(bullPrice)
+        # logger = ["bull ", bullCode, " current price ", str(floatPrice(bullPrice)), "\n"]
+        # file.writelines(logger)
+        #
+        # bearPrice = getCurrentPrice(connectSocket, bearCode)
+        # print "bear ", bearCode, " current price ", floatPrice(bearPrice)
+        # logger = ["bear ", bearCode, " current price ", str(floatPrice(bearPrice)), "\n"]
+        # file.writelines(logger)
 
         # # ========================== bull ================================
         # print "----------- bull gear -----------"
