@@ -7,10 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞银七九牛N.C    65701   10000   20800
-# 恒指摩通六七熊Z.P    65348   10000
-
-# 恒指瑞银七六牛    65321   10000  20400
+# 恒指瑞信七四牛   64929   20200
 
 # improved macd + thread
 # ==================== config =========================
@@ -20,8 +17,8 @@ host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "65701"
-bullRecyclePrice = 20800
+bullCode = "64929"
+bullRecyclePrice = 20200
 tradeOneHand = 10000
 
 ema1Count = 60 / oneTickTime # 1分钟的tick数
@@ -67,7 +64,7 @@ triggerThread.start()
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
-        file = open("bullAndBearLog", "a+")
+        file = open("bull alpha log", "a+")
         # ============== inquire position =====================
         positionArr = simu_inquirePosition(connectSocket)
         # ========== moving average ================

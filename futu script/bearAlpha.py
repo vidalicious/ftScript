@@ -7,10 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞银七九牛N.C    65701   10000   20800
-# 恒指摩通六七熊Z.P    65348   10000
-
-# 恒指瑞银七六牛    65321   10000  20400
+# 恒指摩通六八熊   66248   21305
 
 # improved macd + thread
 # ==================== config =========================
@@ -20,8 +17,8 @@ host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "65701"
-bullRecyclePrice = 20800
+bearCode = "66248"
+bearRecyclePrice = 21305
 tradeOneHand = 10000
 
 ema1Count = 60 / oneTickTime # 1分钟的tick数
@@ -43,10 +40,10 @@ standardDeviation5 = 0
 ema1_K = float(2.0 / (ema1Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
 
-bullTrend_buySignal = False
-bullTrend_sellSignal = False
-bullBuySignal = False
-bullSellSignal = False
+bearTrend_buySignal = False
+bearTrend_sellSignal = False
+bearBuySignal = False
+bearSellSignal = False
 
 moreThanLargeSDTag = False # > large
 
@@ -67,7 +64,7 @@ triggerThread.start()
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
-        file = open("bullAndBearLog", "a+")
+        file = open("bear alpha log", "a+")
         # ============== inquire position =====================
         positionArr = simu_inquirePosition(connectSocket)
         # ========== moving average ================
@@ -98,48 +95,48 @@ if connectSocket is not None:
             counter += 1
 
         if counter > windowCount:
-            if mean1 > mean5:
-                bullTrend_buySignal = True
+            if mean1 < mean5:
+                bearTrend_buySignal = True
                 pathTag.append(" 1 ")
                 print "a"
-            elif mean1 < mean5:
-                bullTrend_sellSignal = True
+            elif mean1 > mean5:
+                bearTrend_sellSignal = True
                 pathTag.append(" 2 ")
                 print "b"
 
-            bullBuy1Price = ""
-            bullSell1Price = ""
-            bullGearArr = getGearData(connectSocket, bullCode, 1)
-            if bullGearArr is not None:
-                bullBuy1Price = bullGearArr[0]["BuyPrice"]
-                bullSell1Price = bullGearArr[0]["SellPrice"]
+            bearBuy1Price = ""
+            bearSell1Price = ""
+            bearGearArr = getGearData(connectSocket, bearCode, 1)
+            if bearGearArr is not None:
+                bearBuy1Price = bearGearArr[0]["BuyPrice"]
+                bearSell1Price = bearGearArr[0]["SellPrice"]
 
-            hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
-            bullPositionRatio = getPositionRatio(positionArr, bullCode)
+            hasBearPosition = ifHasPositon(positionArr, tradeOneHand, bearCode)
+            bearPositionRatio = getPositionRatio(positionArr, bearCode)
 
-            if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
-                bullSellSignal = True
+            if abs(floatPrice(currentTarget) - bearRecyclePrice) < 300:
+                bearSellSignal = True
                 pathTag.append(" too near recycle price ")
                 print "too near recycle price"
             elif standardDeviation5 < 8: # 方差太小，离场
-                bullSellSignal = True
+                bearSellSignal = True
                 pathTag.append(" small standard deviation ")
                 print "small standard deviation"
             elif datetime.datetime.now().time() > datetime.time(15, 58, 0): # 倒数2分钟，离场
-                bullSellSignal = True
+                bearSellSignal = True
                 pathTag.append(" too late ")
                 print "too late"
             else:
-                if bullTrend_buySignal:
-                    bullBuySignal = True
+                if bearTrend_buySignal:
+                    bearBuySignal = True
                     pathTag.append(" 7 ")
                     print "c"
-                if bullTrend_sellSignal:
-                    bullSellSignal = True
+                if bearTrend_sellSignal:
+                    bearSellSignal = True
                     pathTag.append(" 8 ")
                     print "d"
-                if hasBullPosition and bullPositionRatio < -0.03: #止损
-                    bullSellSignal = True
+                if hasBearPosition and bearPositionRatio < -0.03: #止损
+                    bearSellSignal = True
                     pathTag.append(" 9 ")
                     print "e"
 
@@ -148,18 +145,18 @@ if connectSocket is not None:
                 pathTag.append(" large sd tag ")
                 print "large sd tag"
 
-            if bullBuySignal:
-                if not hasBullPosition:
+            if bearBuySignal:
+                if not hasBearPosition:
                     hasBuyOrder = False
                     orderInfoArr = simu_inquireOrder(connectSocket)
                     tradePrice = ""
                     if moreThanLargeSDTag: # 小标准差跟现价,否则跟买卖盘
-                        tradePrice = bullSell1Price
+                        tradePrice = bearSell1Price
                     else:
-                        tradePrice = getCurrentPrice(connectSocket, bullCode)
+                        tradePrice = getCurrentPrice(connectSocket, bearCode)
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
-                            if orderInfo["StockCode"] == bullCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
+                            if orderInfo["StockCode"] == bearCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
                                 if orderInfo["OrderSide"] == "0":
                                     hasBuyOrder = True
                                     if orderInfo["Price"] == tradePrice:
@@ -172,25 +169,25 @@ if connectSocket is not None:
                                     pathTag.append(" 撤卖单 ")
 
                     if not hasBuyOrder:  # 如果没有未成交合适订单则下单
-                        localID = simu_commonBuyOrder(connectSocket, tradePrice, tradeOneHand, bullCode)
-                        print "buy bull ", bullCode, " at ", floatPrice(tradePrice), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID
-                        logger = ["buy bull ", bullCode, " at ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
+                        localID = simu_commonBuyOrder(connectSocket, tradePrice, tradeOneHand, bearCode)
+                        print "buy bear ", bearCode, " at ", floatPrice(tradePrice), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID
+                        logger = ["buy bear ", bearCode, " at ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
                         file.writelines(logger)
                         pathTag.append("\n")
                         file.writelines(pathTag)
 
-            elif bullSellSignal:
-                if hasBullPosition:
+            elif bearSellSignal:
+                if hasBearPosition:
                     hasSellOrder = False
                     orderInfoArr = simu_inquireOrder(connectSocket)
                     tradePrice = ""
                     if moreThanLargeSDTag: # 小标准差跟现价,否则跟买卖盘
-                        tradePrice = bullBuy1Price
+                        tradePrice = bearBuy1Price
                     else:
-                        tradePrice = getCurrentPrice(connectSocket, bullCode)
+                        tradePrice = getCurrentPrice(connectSocket, bearCode)
                     if orderInfoArr is not None:
                         for orderInfo in orderInfoArr:
-                            if orderInfo["StockCode"] == bullCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
+                            if orderInfo["StockCode"] == bearCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
                                 if orderInfo["OrderSide"] == "1":
                                     hasSellOrder = True
                                     if orderInfo["Price"] == tradePrice:
@@ -203,9 +200,9 @@ if connectSocket is not None:
                                     pathTag.append(" 撤买单 ")
 
                     if not hasSellOrder:
-                        localID = simu_commonSellOrder(connectSocket, tradePrice, tradeOneHand, bullCode)
-                        print "sell bull ", bullCode, " at ", floatPrice(tradePrice), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID
-                        logger = ["sell bull ", bullCode, " at ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
+                        localID = simu_commonSellOrder(connectSocket, tradePrice, tradeOneHand, bearCode)
+                        print "sell bear ", bearCode, " at ", floatPrice(tradePrice), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID
+                        logger = ["sell bear ", bearCode, " at ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
                         file.writelines(logger)
                         pathTag.append("\n")
                         file.writelines(pathTag)
@@ -213,10 +210,10 @@ if connectSocket is not None:
         # ======== update =============
         file.close()
 
-        bullTrend_buySignal = False
-        bullTrend_sellSignal = False
-        bullBuySignal = False
-        bullSellSignal = False
+        bearTrend_buySignal = False
+        bearTrend_sellSignal = False
+        bearBuySignal = False
+        bearSellSignal = False
         moreThanLargeSDTag = False
         pathTag = []
 
