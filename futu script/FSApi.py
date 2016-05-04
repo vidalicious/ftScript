@@ -3,6 +3,7 @@
 
 import FSSender
 import socket
+import datetime
 
 # ====================================== CONNECTION ==================================
 COOKIE = 1
@@ -213,3 +214,15 @@ def getPositionRatio(positionArr, stockCode):
 			if position["StockCode"] == stockCode:
 				return float(position["PLRatio"]) / 100000
 	return 0
+
+def isInGoldenTime():
+	if datetime.datetime.now().time() < datetime.time(10, 0, 0):
+		return True
+	else:
+		return False
+
+def isTimeToExit():
+	if datetime.datetime.now().time() > datetime.time(10, 10, 0):
+		return True
+	else:
+		return False

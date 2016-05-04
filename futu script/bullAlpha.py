@@ -7,9 +7,9 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞信七四牛   64929   20200
+# 恒指瑞信六甲牛    63550   10000  19800
 
-# improved macd + thread
+# time no mercy
 # ==================== config =========================
 oneTickTime = 1
 
@@ -17,8 +17,8 @@ host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "64929"
-bullRecyclePrice = 20200
+bullCode = "63550"
+bullRecyclePrice = 19800
 tradeOneHand = 10000
 
 ema1Count = 60 / oneTickTime # 1分钟的tick数
@@ -64,6 +64,10 @@ triggerThread.start()
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
+        if isTimeToExit():
+            print "time to exit"
+            break
+
         file = open("bull alpha log", "a+")
         # ============== inquire position =====================
         positionArr = simu_inquirePosition(connectSocket)
@@ -118,14 +122,10 @@ if connectSocket is not None:
                 bullSellSignal = True
                 pathTag.append(" too near recycle price ")
                 print "too near recycle price"
-            elif standardDeviation5 < 8: # 方差太小，离场
+            elif not isInGoldenTime():
                 bullSellSignal = True
-                pathTag.append(" small standard deviation ")
-                print "small standard deviation"
-            elif datetime.datetime.now().time() > datetime.time(15, 58, 0): # 倒数2分钟，离场
-                bullSellSignal = True
-                pathTag.append(" too late ")
-                print "too late"
+                pathTag.append(" not in golden time ")
+                print "not in golden time"
             else:
                 if bullTrend_buySignal:
                     bullBuySignal = True
@@ -217,5 +217,4 @@ if connectSocket is not None:
         moreThanLargeSDTag = False
         pathTag = []
 
-        # time.sleep(0.1)
     disconnect(connectSocket)
