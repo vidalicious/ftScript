@@ -43,6 +43,9 @@ maxAwaySD = 0
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
+        if datetime.datetime.now().time() > datetime.time(16, 0, 1):
+            break
+
         file = open("bull and bear data", "a+")
 
         currentTarget = getCurrentPrice(connectSocket, targetCode)
