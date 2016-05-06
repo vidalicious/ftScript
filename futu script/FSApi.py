@@ -226,3 +226,25 @@ def isTimeToExit():
 		return True
 	else:
 		return False
+
+def priceMoveUnit(price):
+	if price <= 0.25:
+		return 0.001 #价格[0.05, 0.25] 单位幅度变化0.4%-2%
+	if price > 0.25 and price <= 0.5:
+		return 0.005
+	if price > 0.5 and price <= 10:
+		return 0.01
+	if price > 10 and price <= 20:
+		return 0.02
+	if price > 20 and price <= 100:
+		return 0.05
+	if price > 100 and price <= 200:
+		return 0.1
+	if price > 200 and price <= 500:
+		return 0.2
+	if price > 500 and price <= 1000:
+		return 0.5
+	if price > 1000 and price <= 2000:
+		return 1.0
+	if price > 2000:
+		return 2.0
