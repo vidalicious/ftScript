@@ -16,11 +16,13 @@ bearCode = "65281"
 oneTickTime = 1
 counter = 0
 
+ema10sCount = 10 / oneTickTime #10秒
 ema1Count = 60 / oneTickTime # 1分钟的tick数
 ema5Count = 60 * 5 / oneTickTime #5分钟tick
 windowCount = 60
 targetList = []
 
+mean10s = 0
 mean1 = 0
 mean5 = 0
 
@@ -32,6 +34,7 @@ variance5 = 0
 # 标准差
 standardDeviation5 = 0
 
+ema10s_K = float(2.0 / (ema10sCount + 1))
 ema1_K = float(2.0 / (ema1Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
 
@@ -43,7 +46,9 @@ maxAwaySD = 0
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
-        if datetime.datetime.now().time() > datetime.time(16, 0, 1):
+        if not isGameBegin():
+            continue
+        elif datetime.datetime.now().time() > datetime.time(16, 0, 1):
             break
 
         file = open("bull and bear data", "a+")
@@ -56,6 +61,11 @@ if connectSocket is not None:
         targetList.insert(0, floatPrice(currentTarget))
         if len(targetList) > windowCount:
             targetList = targetList[:windowCount]
+
+        if mean10s != 0:
+            mean10s = floatPrice(currentTarget) * ema10s_K + mean10s * (1 - ema10s_K)
+        else:
+            mean10s = floatPrice(currentTarget)
 
         if mean1 != 0:
             mean1 = floatPrice(currentTarget) * ema1_K + mean1 * (1 - ema1_K)
@@ -75,6 +85,20 @@ if connectSocket is not None:
 
         averageBias1 = getAverageBiasFromList(targetList, mean1)
         averageBias5 = getAverageBiasFromList(targetList, mean5)
+
+        meanBiasRate = (mean1 - mean5) / mean5
+
+        print "mean10s ", str(mean10s), " mean1 ", str(mean1), " mean5 ", str(mean5)
+        logger = ["mean10s ", str(mean10s), " mean1 ", str(mean1), " mean5 ", str(mean5), "\n"]
+        file.writelines(logger)
+
+        print "mean10s - mean1 ", str(mean10s - mean1), " mean10s - mean5 ", str(mean10s - mean5), " mean1 - mean5 ", str(mean1 - mean5)
+        logger = ["mean10s - mean1 ", str(mean10s - mean1), " mean10s - mean5 ", str(mean10s - mean5), " mean1 - mean5 ", str(mean1 - mean5), "\n"]
+        file.writelines(logger)
+
+        print "mean bias rate ", str(meanBiasRate)
+        logger = ["mean bias rate ", str(meanBiasRate), "\n"]
+        file.writelines(logger)
 
         print "mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1), " average bias1 ", str(averageBias1)
         logger = ["mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1), " average bias1 ", str(averageBias1), "\n"]

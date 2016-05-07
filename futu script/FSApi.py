@@ -4,6 +4,7 @@
 import FSSender
 import socket
 import datetime
+import time
 
 # ====================================== CONNECTION ==================================
 COOKIE = 1
@@ -144,6 +145,64 @@ def simu_inquirePosition(connectSocket):
 def simu_inquireOrder(connectSocket):
 	return inquireOrder(connectSocket, 1)
 
+def simu_checkOrderAndBuyWith(connectSocket, price, quantity, stockCode, file, pathTag):
+	hasBuyOrder = False
+	orderInfoArr = simu_inquireOrder(connectSocket)
+	tradePrice = price
+	if orderInfoArr is not None:
+		for orderInfo in orderInfoArr:
+			if orderInfo["StockCode"] == stockCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
+				if orderInfo["OrderSide"] == "0":
+					hasBuyOrder = True
+					if orderInfo["Price"] == tradePrice:
+						pass
+					else:
+						# 价格不对修改订单
+						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice,
+										 quantity)
+				else:
+					simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
+					pathTag.append(" 撤卖单 ")
+
+	if not hasBuyOrder:  # 如果没有未成交合适订单则下单
+		localID = simu_commonBuyOrder(connectSocket, tradePrice, quantity, stockCode)
+		print "buy bull ", stockCode, " at ", floatPrice(tradePrice), " time ", time.strftime(
+			'%Y-%m-%d %H:%M:%S'), " localID ", localID
+		logger = ["buy bull ", stockCode, " at ", str(floatPrice(tradePrice)), " time ",
+				  time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
+		file.writelines(logger)
+		pathTag.append("\n")
+		file.writelines(pathTag)
+
+def simu_checkOrderAndSellWith(connectSocket, price, quantity, stockCode, file, pathTag):
+	hasSellOrder = False
+	orderInfoArr = simu_inquireOrder(connectSocket)
+	tradePrice = price
+	if orderInfoArr is not None:
+		for orderInfo in orderInfoArr:
+			if orderInfo["StockCode"] == stockCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
+				if orderInfo["OrderSide"] == "1":
+					hasSellOrder = True
+					if orderInfo["Price"] == tradePrice:
+						pass
+					else:
+						# 价格不对修改订单
+						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice,
+										 quantity)
+				else:
+					simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
+					pathTag.append(" 撤买单 ")
+
+	if not hasSellOrder:
+		localID = simu_commonSellOrder(connectSocket, tradePrice, quantity, stockCode)
+		print "sell bull ", stockCode, " at ", floatPrice(tradePrice), " time ", time.strftime(
+			'%Y-%m-%d %H:%M:%S'), " localID ", localID
+		logger = ["sell bull ", stockCode, " at ", str(floatPrice(tradePrice)), " time ",
+				  time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
+		file.writelines(logger)
+		pathTag.append("\n")
+		file.writelines(pathTag)
+
 # # 	是否有关于该股票的仓位
 # def simu_hasPosition(connectSocket, quality, stockCode):
 # 	positionArr = simu_inquirePosition(connectSocket)
@@ -163,6 +222,9 @@ def updateCookie():
 
 def floatPrice(price):
     return float(price) / 1000
+
+def strPriceFromFloat(price):
+	return str(price * 1000)
 
 def getMeanFromList(list):
 	total = 0
@@ -214,6 +276,12 @@ def getPositionRatio(positionArr, stockCode):
 			if position["StockCode"] == stockCode:
 				return float(position["PLRatio"]) / 100000
 	return 0
+
+def isGameBegin():
+	if datetime.datetime.now().time() > datetime.time(9, 29, 0):
+		return True
+	else:
+		return False
 
 def isInGoldenTime():
 	if datetime.datetime.now().time() < datetime.time(10, 0, 0):
