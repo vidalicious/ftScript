@@ -124,7 +124,7 @@ if connectSocket is not None:
             else:
                 if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
                     print "too near recycle price"
-                elif not isInGoldenTime(): # 倒数2分钟，离场
+                elif not isInGoldenTime():
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
                 elif mean1 < mean5 and mean10s > mean1:
