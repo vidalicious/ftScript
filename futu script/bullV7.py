@@ -104,23 +104,28 @@ if connectSocket is not None:
                 bullSell1Price = bullGearArr[0]["SellPrice"]
 
             hasBullPosition = ifHasPositon(positionArr, tradeOneHand, bullCode)
-            currentBullPrice = getCurrentPrice(connectSocket, bullCode)
+            positionCost = getPositionPrice(positionArr, bullCode)
             if hasBullPosition:
-                if mean10s > mean1:
-                    tradePrice = strPriceFromFloat(floatPrice(currentBullPrice) + 0.001)
+                if floatPrice(bullBuy1Price) > floatPrice(positionCost):
+                    tradePrice = bullBuy1Price
                     pathTag.append(" 1 ")
                     print "a"
+                elif floatPrice(bullBuy1Price) <= floatPrice(positionCost) and floatPrice(bullSell1Price) >= floatPrice(positionCost):
+                    tradePrice = strPriceFromFloat(floatPrice(positionCost) + 0.001)
+                    pathTag.append(" 2 ")
+                    print "b"
                 else:
-                    if (mean10s - mean1) < -10:
+                    if (mean10s - mean1) < -8: # 急速下降
                         tradePrice = bullBuy1Price
-                        pathTag.append(" 2 ")
-                        print "b"
-                    else:
-                        tradePrice = currentBullPrice
                         pathTag.append(" 3 ")
                         print "c"
-                if (mean10s - mean1) < 10:
+                    else:
+                        tradePrice = bullSell1Price
+                        pathTag.append(" 4 ")
+                        print "d"
+                if (mean10s - mean1) < 8:
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
+
             else:
                 if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
                     print "too near recycle price"
@@ -128,10 +133,14 @@ if connectSocket is not None:
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
                 elif mean1 < mean5 and mean10s > mean1:
-                    if (mean10s - mean1) > 10:
+                    if (mean10s - mean1) > 8:
                         tradePrice = bullSell1Price
+                        pathTag.append(" 5 ")
+                        print "e"
                     else:
-                        tradePrice = currentBullPrice
+                        tradePrice = bullBuy1Price
+                        pathTag.append(" 6 ")
+                        print "f"
 
                     simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 

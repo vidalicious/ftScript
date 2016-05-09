@@ -161,8 +161,9 @@ def simu_checkOrderAndBuyWith(connectSocket, price, quantity, stockCode, file, p
 						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice,
 										 quantity)
 				else:
-					simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
-					pathTag.append(" 撤卖单 ")
+					hasBuyOrder = True # 有卖单，不再买，先卖
+					# simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
+					# pathTag.append(" 撤卖单 ")
 
 	if not hasBuyOrder:  # 如果没有未成交合适订单则下单
 		localID = simu_commonBuyOrder(connectSocket, tradePrice, quantity, stockCode)
@@ -290,7 +291,7 @@ def isInGoldenTime():
 		return False
 
 def isTimeToExit():
-	if datetime.datetime.now().time() > datetime.time(10, 10, 0):
+	if datetime.datetime.now().time() > datetime.time(16, 0, 0):
 		return True
 	else:
 		return False
