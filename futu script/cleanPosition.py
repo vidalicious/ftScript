@@ -8,7 +8,7 @@ import FSApi
 
 host = "localhost"
 port = 11111
-stockCode = "66248"
+stockCode = "63252"
 tradeOneHand = 10000
 
 connectSocket = FSApi.connect(host, port)

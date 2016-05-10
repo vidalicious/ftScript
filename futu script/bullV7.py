@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞银七九牛   63252   19500
+# 恒指瑞银七二牛   63331   19650
 
 # greed is good
 # ==================== config =========================
@@ -17,8 +17,8 @@ host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "63252"
-bullRecyclePrice = 19500
+bullCode = "63331"
+bullRecyclePrice = 19650
 tradeOneHand = 10000
 
 ema10sCount = 10 / oneTickTime #10秒
