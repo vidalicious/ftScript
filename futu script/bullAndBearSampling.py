@@ -51,7 +51,7 @@ if connectSocket is not None:
         elif datetime.datetime.now().time() > datetime.time(16, 0, 1):
             break
 
-        file = open("bull and bear data", "a+")
+        file = open("bull and bear data.txt", "a+")
 
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')

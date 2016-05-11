@@ -285,7 +285,13 @@ def isGameBegin():
 		return False
 
 def isInGoldenTime():
-	if datetime.datetime.now().time() > datetime.time(9, 32, 0) and datetime.datetime.now().time() < datetime.time(15, 45, 0):
+	if datetime.datetime.now().time() > datetime.time(9, 32, 0) and datetime.datetime.now().time() < datetime.time(11, 0, 0):
+		return True
+	else:
+		return False
+
+def isInWarningTime():
+	if datetime.datetime.now().time() > datetime.time(15, 58, 0):
 		return True
 	else:
 		return False

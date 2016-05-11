@@ -62,7 +62,7 @@ if connectSocket is not None:
             print "time to exit"
             break
 
-        file = open("bullAndBearLog", "a+")
+        file = open("bullAndBearLog.txt", "a+")
         # ============== inquire position =====================
         positionArr = simu_inquirePosition(connectSocket)
         # ========== moving average ================
@@ -96,6 +96,9 @@ if connectSocket is not None:
 
         if counter > windowCount:
 
+            pathTag.extend(["counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"])
+            pathTag.extend(["mean10s ", str(mean10s), " mean1", str(mean1), " mean5 ", str(mean5), "\n"])
+
             bullBuy1Price = ""
             bullSell1Price = ""
             bullGearArr = getGearData(connectSocket, bullCode, 1)
@@ -115,16 +118,16 @@ if connectSocket is not None:
                     pathTag.append(" 2 ")
                     print "b"
                 else:
-                    if (mean10s - mean1) < -8: # 急速下降
-                        tradePrice = bullBuy1Price
-                        pathTag.append(" 3 ")
-                        print "c"
-                    else:
-                        tradePrice = bullSell1Price
-                        pathTag.append(" 4 ")
-                        print "d"
-                if (mean10s - mean1) < 8:
-                    simu_checkOrderAndSellWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
+                    tradePrice = bullBuy1Price
+                    pathTag.append(" 3 ")
+                    print "c"
+
+                if isInWarningTime():
+                    tradePrice = bullBuy1Price
+                    pathTag.append(" 4 ")
+                    print "d"
+
+                simu_checkOrderAndSellWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
             else:
                 if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
