@@ -158,8 +158,10 @@ def simu_checkOrderAndBuyWith(connectSocket, price, quantity, stockCode, file, p
 						pass
 					else:
 						# 价格不对修改订单
-						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice,
-										 quantity)
+						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, quantity)
+						print "modify stock ", stockCode, " buy order to ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
+						logger = ["modify stock ", stockCode, " buy order to ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
+						file.writelines(logger)
 				else:
 					hasBuyOrder = True # 有卖单，不再买，先卖
 					# simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
@@ -167,10 +169,8 @@ def simu_checkOrderAndBuyWith(connectSocket, price, quantity, stockCode, file, p
 
 	if not hasBuyOrder:  # 如果没有未成交合适订单则下单
 		localID = simu_commonBuyOrder(connectSocket, tradePrice, quantity, stockCode)
-		print "buy bull ", stockCode, " at ", floatPrice(tradePrice), " time ", time.strftime(
-			'%Y-%m-%d %H:%M:%S'), " localID ", localID
-		logger = ["buy bull ", stockCode, " at ", str(floatPrice(tradePrice)), " time ",
-				  time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
+		print "buy stock ", stockCode, " at ", floatPrice(tradePrice), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID
+		logger = ["buy stock ", stockCode, " at ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
 		file.writelines(logger)
 		pathTag.append("\n")
 		file.writelines(pathTag)
@@ -188,18 +188,18 @@ def simu_checkOrderAndSellWith(connectSocket, price, quantity, stockCode, file, 
 						pass
 					else:
 						# 价格不对修改订单
-						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice,
-										 quantity)
+						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, quantity)
+						print "modify stock ", stockCode, " sell order to ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
+						logger = ["modify stock ", stockCode, "sell order to ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
+						file.writelines(logger)
 				else:
 					simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
 					pathTag.append(" 撤买单 ")
 
 	if not hasSellOrder:
 		localID = simu_commonSellOrder(connectSocket, tradePrice, quantity, stockCode)
-		print "sell bull ", stockCode, " at ", floatPrice(tradePrice), " time ", time.strftime(
-			'%Y-%m-%d %H:%M:%S'), " localID ", localID
-		logger = ["sell bull ", stockCode, " at ", str(floatPrice(tradePrice)), " time ",
-				  time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
+		print "sell stock ", stockCode, " at ", floatPrice(tradePrice), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID
+		logger = ["sell stock ", stockCode, " at ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " localID ", localID, "\n"]
 		file.writelines(logger)
 		pathTag.append("\n")
 		file.writelines(pathTag)
