@@ -34,6 +34,9 @@ mean10s = 0
 mean1 = 0
 mean5 = 0
 
+lastMean10s = 0
+lastMean1 = 0
+
 ema10s_K = float(2.0 / (ema10sCount + 1))
 ema1_K = float(2.0 / (ema1Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
@@ -135,22 +138,23 @@ if connectSocket is not None:
                 elif not isInGoldenTime():
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
-                elif mean1 > mean5 and mean10s < mean1:
+                else:
                     if (mean10s - mean1) < -8:
                         tradePrice = bearSell1Price
                         pathTag.append(" 5 ")
                         print "e"
-                    else:
+                        simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bearCode, file, pathTag)
+                    elif lastMean10s > lastMean1 and mean10s < mean1:
                         tradePrice = bearBuy1Price
                         pathTag.append(" 6 ")
                         print "f"
-
-                    simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bearCode, file, pathTag)
-
+                        simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bearCode, file, pathTag)
 
         # ======== update =============
         file.close()
         pathTag = []
+        lastMean10s = mean10s
+        lastMean1 = mean1
 
         # time.sleep(0.1)
     disconnect(connectSocket)

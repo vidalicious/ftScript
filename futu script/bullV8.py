@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞银七五牛   63025   19300
+# 恒指瑞银七二牛   63331   19650
 
 # greed is good
 # ==================== config =========================
@@ -17,8 +17,8 @@ host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "63025"
-bullRecyclePrice = 19300
+bullCode = "63331"
+bullRecyclePrice = 19650
 tradeOneHand = 10000
 
 ema10sCount = 10 / oneTickTime #10秒
@@ -65,7 +65,7 @@ if connectSocket is not None:
             print "time to exit"
             break
 
-        file = open("bull alpha log.txt", "a+")
+        file = open("bullAndBearLog.txt", "a+")
         # ============== inquire position =====================
         positionArr = simu_inquirePosition(connectSocket)
         # ========== moving average ================
