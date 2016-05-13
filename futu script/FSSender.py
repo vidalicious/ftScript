@@ -29,7 +29,12 @@ def send_req_and_get_rsp(socket_futu_api, protocol_code, req_param, protocol_ver
 
 	buf_size = 16384
 	#收包
-	rsp_str = socket_futu_api.recv(int(buf_size))
+	rsp_str = ""
+	while True:
+		buf = socket_futu_api.recv(int(buf_size))
+		rsp_str += buf
+		if(len(buf) < int(buf_size)):
+			break
 	#回包josn解析
 	return json_analyze_rsps(rsp_str)
 

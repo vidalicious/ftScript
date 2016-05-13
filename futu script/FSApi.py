@@ -190,7 +190,7 @@ def simu_checkOrderAndSellWith(connectSocket, price, quantity, stockCode, file, 
 						# 价格不对修改订单
 						simu_modifyOrder(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], tradePrice, quantity)
 						print "modify stock ", stockCode, " sell order to ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
-						logger = ["modify stock ", stockCode, "sell order to ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
+						logger = ["modify stock ", stockCode, " sell order to ", str(floatPrice(tradePrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"]
 						file.writelines(logger)
 				else:
 					simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
@@ -255,11 +255,11 @@ def getAverageBiasFromList(list, mean):
 		return 0
 
 # 	是否有关于该股票的仓位
-def ifHasPositon(positionArr, quality, stockCode):
+def ifHasPositon(positionArr, stockCode):
 	hasPosition = False
 	if positionArr is not None:
 		for position in positionArr:
-			if stockCode == position["StockCode"] and int(position["CanSellQty"]) >= int(quality):
+			if stockCode == position["StockCode"] and float(position["CanSellQty"]) > 0:
 				hasPosition = True
 				break
 	return hasPosition
@@ -285,7 +285,8 @@ def isGameBegin():
 		return False
 
 def isInGoldenTime():
-	if datetime.datetime.now().time() > datetime.time(9, 32, 0) and datetime.datetime.now().time() < datetime.time(11, 30, 0):
+	if (datetime.datetime.now().time() > datetime.time(9, 32, 0) and datetime.datetime.now().time() < datetime.time(11, 45, 0)) or\
+			(datetime.datetime.now().time() > datetime.time(13, 0, 0) and datetime.datetime.now().time() < datetime.time(15, 45, 0)):
 		return True
 	else:
 		return False

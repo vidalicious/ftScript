@@ -59,7 +59,7 @@ connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
         if not isGameBegin():
-            print "game not begin"
+            # print "game not begin"
             continue
         elif isTimeToExit():
             print "time to exit"
@@ -99,6 +99,8 @@ if connectSocket is not None:
 
         if counter > windowCount:
 
+            print "in"
+
             pathTag.extend(["counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"])
             pathTag.extend(["mean10s ", str(mean10s), " mean1", str(mean1), " mean5 ", str(mean5), "\n"])
 
@@ -109,7 +111,7 @@ if connectSocket is not None:
                 bearBuy1Price = bearGearArr[0]["BuyPrice"]
                 bearSell1Price = bearGearArr[0]["SellPrice"]
 
-            hasBearPosition = ifHasPositon(positionArr, tradeOneHand, bearCode)
+            hasBearPosition = ifHasPositon(positionArr, bearCode)
             positionCost = getPositionPrice(positionArr, bearCode)
             if hasBearPosition:
                 if floatPrice(bearBuy1Price) > floatPrice(positionCost):
@@ -149,6 +151,8 @@ if connectSocket is not None:
                         pathTag.append(" 6 ")
                         print "f"
                         simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bearCode, file, pathTag)
+
+                    print "g"
 
         # ======== update =============
         file.close()
