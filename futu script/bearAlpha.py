@@ -113,6 +113,9 @@ if connectSocket is not None:
 
             hasBearPosition = ifHasPositon(positionArr, bearCode)
             positionCost = getPositionPrice(positionArr, bearCode)
+
+            print "hasBearPosition ", hasBearPosition
+
             if hasBearPosition:
                 if floatPrice(bearBuy1Price) > floatPrice(positionCost):
                     tradePrice = bearBuy1Price

@@ -113,6 +113,9 @@ if connectSocket is not None:
 
             hasBullPosition = ifHasPositon(positionArr, bullCode)
             positionCost = getPositionPrice(positionArr, bullCode)
+
+            print "hasBullPosition ", hasBullPosition
+
             if hasBullPosition:
                 if floatPrice(bullBuy1Price) > floatPrice(positionCost):
                     tradePrice = bullBuy1Price
