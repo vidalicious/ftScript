@@ -67,6 +67,13 @@ if connectSocket is not None:
 
         file = open("bullAndBearLog.txt", "a+")
         # ============== inquire position =====================
+        if connectSocket is None:
+            print "connect socket is None"
+            logger = ["connect socket is None", "\n"]
+            file.writelines(logger)
+            file.close()
+            break
+
         positionArr = simu_inquirePosition(connectSocket)
         # ========== moving average ================
         currentTarget = getCurrentPrice(connectSocket, targetCode)
