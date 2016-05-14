@@ -66,7 +66,7 @@ if connectSocket is not None:
             break
 
         file = open("bull alpha log.txt", "a+")
-        # ============== inquire position =====================
+
         if connectSocket is None:
             print "connect socket is None"
             logger = ["connect socket is None", "\n"]
@@ -74,7 +74,6 @@ if connectSocket is not None:
             file.close()
             break
 
-        positionArr = simu_inquirePosition(connectSocket)
         # ========== moving average ================
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
@@ -118,8 +117,11 @@ if connectSocket is not None:
                 bullBuy1Price = bullGearArr[0]["BuyPrice"]
                 bullSell1Price = bullGearArr[0]["SellPrice"]
 
+            # ============== inquire position =====================
+            positionArr = simu_inquirePosition(connectSocket)
             hasBullPosition = ifHasPositon(positionArr, bullCode)
             positionCost = getPositionPrice(positionArr, bullCode)
+            positionQty = getPositionQty(positionArr, bullCode)
 
             print "hasBullPosition ", hasBullPosition
 
@@ -142,7 +144,7 @@ if connectSocket is not None:
                     pathTag.append(" 4 ")
                     print "d"
 
-                simu_checkOrderAndSellWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
+                simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
             else:
                 if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:

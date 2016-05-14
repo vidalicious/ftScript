@@ -29,6 +29,7 @@ if connectSocket is not None:
     bullCode = "63025"
     positionArr = simu_inquirePosition(connectSocket)
     hasBullPosition = ifHasPositon(positionArr, bullCode)
+    a = getPositionQty(positionArr, bullCode)
     print hasBullPosition
     # file.close()
 

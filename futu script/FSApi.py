@@ -151,7 +151,7 @@ def simu_checkOrderAndBuyWith(connectSocket, price, quantity, stockCode, file, p
 	tradePrice = price
 	if orderInfoArr is not None:
 		for orderInfo in orderInfoArr:
-			if orderInfo["StockCode"] == stockCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
+			if orderInfo["StockCode"] == stockCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1" or orderInfo["Status"] == "2"):
 				if orderInfo["OrderSide"] == "0":
 					hasBuyOrder = True
 					if orderInfo["Price"] == tradePrice:
@@ -181,7 +181,7 @@ def simu_checkOrderAndSellWith(connectSocket, price, quantity, stockCode, file, 
 	tradePrice = price
 	if orderInfoArr is not None:
 		for orderInfo in orderInfoArr:
-			if orderInfo["StockCode"] == stockCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1"):
+			if orderInfo["StockCode"] == stockCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1" or orderInfo["Status"] == "2"):
 				if orderInfo["OrderSide"] == "1":
 					hasSellOrder = True
 					if orderInfo["Price"] == tradePrice:
@@ -259,7 +259,7 @@ def ifHasPositon(positionArr, stockCode):
 	hasPosition = False
 	if positionArr is not None:
 		for position in positionArr:
-			if stockCode == position["StockCode"] and float(position["CanSellQty"]) > 0:
+			if stockCode == position["StockCode"] and int(position["Qty"]) > 0:
 				hasPosition = True
 				break
 	return hasPosition
@@ -270,6 +270,13 @@ def getPositionPrice(positionArr, stockCode):
 			if position["StockCode"] == stockCode:
 				return position["CostPrice"]
 	return "0"
+
+def getPositionQty(positionArr, stockCode):
+	if positionArr is not None:
+		for position in positionArr:
+			if position["StockCode"] == stockCode:
+				return int(position["Qty"])
+	return 0
 
 def getPositionRatio(positionArr, stockCode):
 	if positionArr is not None:
