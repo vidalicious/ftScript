@@ -16,8 +16,9 @@ oneTickTime = 1
 host = "localhost"
 port = 11111
 
-targetCode = "800000" # 恒指
+targetCode = "999000" # 恒指
 bullCode = "63331"
+indexCode = "800000"
 bullRecyclePrice = 19650
 tradeOneHand = 10000
 
@@ -69,6 +70,9 @@ if connectSocket is not None:
         # ========== moving average ================
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
+
+        indexPrice = getCurrentPrice(connectSocket, indexCode)
+        print "index price ", str(indexPrice)
 
         if flag: # one tick 触发一次
             flag = False
@@ -142,7 +146,7 @@ if connectSocket is not None:
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
             else:
-                if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
+                if abs(floatPrice(indexPrice) - bullRecyclePrice) < 300:
                     print "too near recycle price"
                 elif not isInGoldenTime():
                     pathTag.append(" not in golden time ")

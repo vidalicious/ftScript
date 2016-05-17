@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞银七五牛   63025   19300
+# 恒指法兴六乙牛   63281   19408
 
 # greed is good
 # ==================== config =========================
@@ -16,9 +16,10 @@ oneTickTime = 1
 host = "localhost"
 port = 11111
 
-targetCode = "800000" # 恒指
-bullCode = "63025"
-bullRecyclePrice = 19300
+targetCode = "999000" # 恒指
+bullCode = "63281"
+indexCode = "800000"
+bullRecyclePrice = 19408
 tradeOneHand = 10000
 
 ema10sCount = 10 / oneTickTime #10秒
@@ -28,14 +29,13 @@ windowCount = 60
 # =========================================================
 counter = 0
 
-targetList = []
-
 mean10s = 0
 mean1 = 0
 mean5 = 0
 
 lastMean10s = 0
 lastMean1 = 0
+lastMean5 = 0
 
 ema10s_K = float(2.0 / (ema10sCount + 1))
 ema1_K = float(2.0 / (ema1Count + 1))
@@ -67,23 +67,15 @@ if connectSocket is not None:
 
         file = open("bull alpha log.txt", "a+")
 
-        if connectSocket is None:
-            print "connect socket is None"
-            logger = ["connect socket is None", "\n"]
-            file.writelines(logger)
-            file.close()
-            break
-
         # ========== moving average ================
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
 
+        indexPrice = getCurrentPrice(connectSocket, indexCode)
+        print "index price ", str(indexPrice)
+
         if flag: # one tick 触发一次
             flag = False
-
-            targetList.insert(0, floatPrice(currentTarget))
-            if len(targetList) > windowCount:
-                targetList = targetList[:windowCount]
 
             if mean10s != 0:
                 mean10s = floatPrice(currentTarget) * ema10s_K + mean10s * (1 - ema10s_K)
@@ -122,46 +114,54 @@ if connectSocket is not None:
             hasBullPosition = ifHasPositon(positionArr, bullCode)
             positionCost = getPositionPrice(positionArr, bullCode)
             positionQty = getPositionQty(positionArr, bullCode)
+            positionRatio = getPositionRatio(positionArr, bullCode)
 
             print "hasBullPosition ", hasBullPosition
 
-            if hasBullPosition:
-                if floatPrice(bullBuy1Price) > floatPrice(positionCost):
-                    tradePrice = bullBuy1Price
-                    pathTag.append(" 1 ")
-                    print "a"
-                elif floatPrice(bullBuy1Price) <= floatPrice(positionCost) and floatPrice(bullSell1Price) >= floatPrice(positionCost):
-                    tradePrice = strPriceFromFloat(floatPrice(positionCost) + 0.001)
-                    pathTag.append(" 2 ")
-                    print "b"
-                else:
-                    tradePrice = bullBuy1Price
-                    pathTag.append(" 3 ")
-                    print "c"
+            # ============== inquire order ========================
 
+            if hasBullPosition:
                 if isInWarningTime():
                     tradePrice = bullBuy1Price
                     pathTag.append(" 4 ")
                     print "d"
+                    simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
+                elif mean1 < mean5:
+                    if (mean10s - mean1) < -4:
+                        tradePrice = bullBuy1Price
+                        pathTag.append(" 1 ")
+                        print "a"
+                    else:
+                        tradePrice = bullSell1Price
+                        pathTag.append(" 2 ")
+                        print "b"
+
+                    simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
+
+                elif positionRatio < -0.03:
+                    tradePrice = bullBuy1Price
+                    pathTag.append(" 3 ")
+                    print "c"
+                    simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
             else:
-                if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
+                if abs(floatPrice(indexPrice) - bullRecyclePrice) < 300:
                     print "too near recycle price"
                 elif not isInGoldenTime():
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
                 else:
-                    if (mean10s - mean1) > 8:
-                        tradePrice = bullSell1Price
-                        pathTag.append(" 5 ")
-                        print "e"
-                        simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
-                    elif lastMean10s < lastMean1 and mean10s > mean1:
-                        tradePrice = bullBuy1Price
-                        pathTag.append(" 6 ")
-                        print "f"
+                    if lastMean1 < lastMean5 and mean1 > mean5:
+                        if (mean10s - mean1) > 4:
+                            tradePrice = bullSell1Price
+                            pathTag.append(" 5 ")
+                            print "e"
+                        else:
+                            tradePrice = bullBuy1Price
+                            pathTag.append(" 6 ")
+                            print "f"
+
                         simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
                     print "g"
@@ -171,6 +171,7 @@ if connectSocket is not None:
         pathTag = []
         lastMean10s = mean10s
         lastMean1 = mean1
+        lastMean5 = mean5
 
-        # time.sleep(0.1)
+        # time.sleep(1)
     disconnect(connectSocket)

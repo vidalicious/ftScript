@@ -8,7 +8,7 @@ from math import *
 host = "localhost"
 port = 11111
 
-targetCode = "800000" # 恒指
+targetCode = "999000" # 恒指
 
 bullCode = "65319"
 bearCode = "65281"
