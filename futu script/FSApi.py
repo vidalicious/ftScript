@@ -299,7 +299,8 @@ def isInGoldenTime():
 		return False
 
 def isInWarningTime():
-	if (datetime.datetime.now().time() > datetime.time(11, 58, 0) and datetime.datetime.now().time() < datetime.time(13, 0, 0)) or datetime.datetime.now().time() > datetime.time(15, 58, 0):
+	if (datetime.datetime.now().time() > datetime.time(11, 50, 0) and datetime.datetime.now().time() < datetime.time(12, 0, 0)) or \
+			(datetime.datetime.now().time() > datetime.time(15, 50, 0) and datetime.datetime.now().time() < datetime.time(16, 0, 0)):
 		return True
 	else:
 		return False
