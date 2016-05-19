@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指法兴六乙牛   63281   19408
+# 恒指法兴六十牛   62686   19008
 
 # greed is good
 # ==================== config =========================
@@ -17,9 +17,9 @@ host = "localhost"
 port = 11111
 
 targetCode = "999000" # 恒指
-bullCode = "63281"
+bullCode = "62686"
 indexCode = "800000"
-bullRecyclePrice = 19408
+bullRecyclePrice = 19008
 tradeOneHand = 10000
 
 ema10sCount = 10 / oneTickTime #10秒
@@ -97,8 +97,6 @@ if connectSocket is not None:
 
         if counter > windowCount:
 
-            print "in"
-
             pathTag.extend(["counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"])
             pathTag.extend(["mean10s ", str(mean10s), " mean1", str(mean1), " mean5 ", str(mean5), "\n"])
 
@@ -127,15 +125,10 @@ if connectSocket is not None:
                     print "d"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif mean1 < mean5:
-                    if (mean10s - mean1) < -4:
-                        tradePrice = bullBuy1Price
-                        pathTag.append(" 1 ")
-                        print "a"
-                    else:
-                        tradePrice = bullSell1Price
-                        pathTag.append(" 2 ")
-                        print "b"
+                elif mean1 > mean5 and lastMean10s > lastMean1 and mean10s < mean1:
+                    tradePrice = bullBuy1Price
+                    pathTag.append(" 1 ")
+                    print "a"
 
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
@@ -152,15 +145,10 @@ if connectSocket is not None:
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
                 else:
-                    if lastMean1 < lastMean5 and mean1 > mean5:
-                        if (mean10s - mean1) > 4:
-                            tradePrice = bullSell1Price
-                            pathTag.append(" 5 ")
-                            print "e"
-                        else:
-                            tradePrice = bullBuy1Price
-                            pathTag.append(" 6 ")
-                            print "f"
+                    if mean1 < mean5 and lastMean10s < lastMean1 and mean10s > mean1:
+                        tradePrice = bullBuy1Price
+                        pathTag.append(" 6 ")
+                        print "f"
 
                         simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 

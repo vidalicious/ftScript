@@ -97,8 +97,6 @@ if connectSocket is not None:
 
         if counter > windowCount:
 
-            print "in"
-
             pathTag.extend(["counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"])
             pathTag.extend(["mean10s ", str(mean10s), " mean1", str(mean1), " mean5 ", str(mean5), "\n"])
 
