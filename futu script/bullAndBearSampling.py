@@ -13,18 +13,31 @@ targetCode = "999000" # 恒指
 bullCode = "65319"
 bearCode = "65281"
 
-oneTickTime = 1
+oneTickTime = 10
 counter = 0
 
 ema10sCount = 10 / oneTickTime #10秒
 ema1Count = 60 / oneTickTime # 1分钟的tick数
 ema5Count = 60 * 5 / oneTickTime #5分钟tick
+ema10Count = 60 * 10 / oneTickTime
+ema15Count = 60 * 15 / oneTickTime
+ema20Count = 60 * 20 / oneTickTime
+ema30Count = 60 * 30 / oneTickTime
+ema45Count = 60 * 45 / oneTickTime
+ema60Count = 60 * 60 / oneTickTime
+
 windowCount = 60
 targetList = []
 
 mean10s = 0
 mean1 = 0
 mean5 = 0
+mean10 = 0
+mean15 = 0
+mean20 = 0
+mean30 = 0
+mean45 = 0
+mean60 = 0
 
 variance1 = 0
 # 标准差
@@ -37,6 +50,12 @@ standardDeviation5 = 0
 ema10s_K = float(2.0 / (ema10sCount + 1))
 ema1_K = float(2.0 / (ema1Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
+ema10_K = float(2.0 / (ema10Count + 1))
+ema15_K = float(2.0 / (ema15Count + 1))
+ema20_K = float(2.0 / (ema20Count + 1))
+ema30_K = float(2.0 / (ema30Count + 1))
+ema45_K = float(2.0 / (ema45Count + 1))
+ema60_K = float(2.0 / (ema60Count + 1))
 
 averageBias1 = 0
 averageBias5 = 0
@@ -76,6 +95,13 @@ if connectSocket is not None:
             mean5 = floatPrice(currentTarget) * ema5_K + mean5 * (1 - ema5_K)
         else:
             mean5 = floatPrice(currentTarget)
+
+        mean10 = updateMeanBy(floatPrice(currentTarget), ema10_K, mean10)
+        mean15 = updateMeanBy(floatPrice(currentTarget), ema15_K, mean15)
+        mean20 = updateMeanBy(floatPrice(currentTarget), ema20_K, mean20)
+        mean30 = updateMeanBy(floatPrice(currentTarget), ema30_K, mean30)
+        mean45 = updateMeanBy(floatPrice(currentTarget), ema45_K, mean45)
+        mean60 = updateMeanBy(floatPrice(currentTarget), ema60_K, mean60)
 
         variance1 = getVarianceFromList(targetList, mean1)
         standardDeviation1 = sqrt(variance1)

@@ -92,6 +92,8 @@ if connectSocket is not None:
             else:
                 mean5 = floatPrice(currentTarget)
 
+
+
             print "mean10s ", str(mean10s), " mean1", str(mean1), " mean5 ", str(mean5)
             counter += 1
 

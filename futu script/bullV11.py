@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指法兴六乙牛   62951   19108
+# 恒指瑞银七二牛   63331   19650
 
 # greed is good
 # ==================== config =========================
@@ -17,9 +17,9 @@ host = "localhost"
 port = 11111
 
 targetCode = "999000" # 恒指
-bullCode = "62951"
+bullCode = "63331"
 indexCode = "800000"
-bullRecyclePrice = 19108
+bullRecyclePrice = 19650
 tradeOneHand = 10000
 
 ema2Count = 60 * 2 / oneTickTime
@@ -62,7 +62,7 @@ if connectSocket is not None:
             print "time to exit"
             break
 
-        file = open("bull alpha log.txt", "a+")
+        file = open("bullAndBearLog.txt", "a+")
 
         # ========== moving average ================
         currentTarget = getCurrentPrice(connectSocket, targetCode)
