@@ -13,7 +13,7 @@ targetCode = "999000" # 恒指
 bullCode = "65319"
 bearCode = "65281"
 
-oneTickTime = 10
+oneTickTime = 3
 counter = 0
 
 ema10sCount = 10 / oneTickTime #10秒

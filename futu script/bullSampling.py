@@ -1,190 +1,122 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 
+import pandas as pd
 import time
 from FSApi import *
 from math import *
 
+#恒指法兴七七牛    67429
+
 host = "localhost"
 port = 11111
 
-# targetCode = "800000" # 恒指
-
-bullCode = "63249"
+targetCode = "67429" #恒指
 
 oneTickTime = 1
 counter = 0
 
+ema10sCount = 10 / oneTickTime #10秒
 ema1Count = 60 / oneTickTime # 1分钟的tick数
 ema5Count = 60 * 5 / oneTickTime #5分钟tick
-windowCount = 60
-priceList = []
+ema10Count = 60 * 10 / oneTickTime
+ema15Count = 60 * 15 / oneTickTime
+ema20Count = 60 * 20 / oneTickTime
+ema30Count = 60 * 30 / oneTickTime
+ema45Count = 60 * 45 / oneTickTime
+ema60Count = 60 * 60 / oneTickTime
 
-mean1 = 0
-mean5 = 0
-
-variance1 = 0
-# 标准差
-standardDeviation1 = 0
-
-variance5 = 0
-# 标准差
-standardDeviation5 = 0
-
+ema10s_K = float(2.0 / (ema10sCount + 1))
 ema1_K = float(2.0 / (ema1Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
+ema10_K = float(2.0 / (ema10Count + 1))
+ema15_K = float(2.0 / (ema15Count + 1))
+ema20_K = float(2.0 / (ema20Count + 1))
+ema30_K = float(2.0 / (ema30Count + 1))
+ema45_K = float(2.0 / (ema45Count + 1))
+ema60_K = float(2.0 / (ema60Count + 1))
 
-averageBias1 = 0
-averageBias5 = 0
-
-maxAwaySD = 0
+mean10s = 0
+mean1 = 0
+mean5 = 0
+mean10 = 0
+mean15 = 0
+mean20 = 0
+mean30 = 0
+mean45 = 0
+mean60 = 0
 
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
-        if datetime.datetime.now().time() > datetime.time(16, 0, 1):
+        if not isGameBegin():
+            continue
+        elif datetime.datetime.now().time() > datetime.time(16, 0, 1):
             break
 
-        file = open("bull data", "a+")
-        
-        currentBullPrice = getCurrentPrice(connectSocket, bullCode)
-        print "counter ", str(counter), " bull ", str(floatPrice(currentBullPrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " bull code ", bullCode
-        logger = ["counter ", str(counter), " bull ", str(floatPrice(currentBullPrice)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), " bull code ", bullCode, "\n"]
-        file.writelines(logger)
-        
-        priceList.insert(0, floatPrice(currentBullPrice))
-        if len(priceList) > windowCount:
-            priceList = priceList[:windowCount]
+        currentTarget = getCurrentPrice(connectSocket, targetCode)
+        print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
+        mean10s = updateMeanBy(floatPrice(currentTarget), ema10s_K, mean10s)
+        mean1 = updateMeanBy(floatPrice(currentTarget), ema1_K, mean1)
+        mean5 = updateMeanBy(floatPrice(currentTarget), ema5_K, mean5)
+        mean10 = updateMeanBy(floatPrice(currentTarget), ema10_K, mean10)
+        mean15 = updateMeanBy(floatPrice(currentTarget), ema15_K, mean15)
+        mean20 = updateMeanBy(floatPrice(currentTarget), ema20_K, mean20)
+        mean30 = updateMeanBy(floatPrice(currentTarget), ema30_K, mean30)
+        mean45 = updateMeanBy(floatPrice(currentTarget), ema45_K, mean45)
+        mean60 = updateMeanBy(floatPrice(currentTarget), ema60_K, mean60)
 
-        if mean1 != 0:
-            mean1 = floatPrice(currentBullPrice) * ema1_K + mean1 * (1 - ema1_K)
-        else:
-            mean1 = floatPrice(currentBullPrice)
+        lt = []
+        l10s = []
+        l1 = []
+        l5 = []
+        l10 = []
+        l15 = []
+        l20 = []
+        l30 = []
+        l45 = []
+        l60 = []
+        lIndex = []
 
-        if mean5 != 0:
-            mean5 = floatPrice(currentBullPrice) * ema5_K + mean5 * (1 - ema5_K)
-        else:
-            mean5 = floatPrice(currentBullPrice)
+        lt.append(floatPrice(currentTarget))
+        l10s.append(mean10s)
+        l1.append(mean1)
+        l5.append(mean5)
+        l10.append(mean10)
+        l15.append(mean15)
+        l20.append(mean20)
+        l30.append(mean30)
+        l45.append(mean45)
+        l60.append(mean60)
+        lIndex.append(counter)
 
-        variance1 = getVarianceFromList(priceList, mean1)
-        standardDeviation1 = sqrt(variance1)
+        st = pd.Series(lt, index=lIndex)
+        s10s = pd.Series(l10s, index=lIndex)
+        s1 = pd.Series(l1, index=lIndex)
+        s5 = pd.Series(l5, index=lIndex)
+        s10 = pd.Series(l10, index=lIndex)
+        s15 = pd.Series(l15, index=lIndex)
+        s20 = pd.Series(l20, index=lIndex)
+        s30 = pd.Series(l30, index=lIndex)
+        s45 = pd.Series(l45, index=lIndex)
+        s60 = pd.Series(l60, index=lIndex)
 
-        variance5 = getVarianceFromList(priceList, mean5)
-        standardDeviation5 = sqrt(variance5)
+        d = {"st" : st,
+             "s10s" : s10s,
+             "s1" : s1,
+             "s5" : s5,
+             "s10" : s10,
+             "s15" : s15,
+             "s20" : s20,
+             "s30" : s30,
+             "s45" : s45,
+             "s60" : s60}
 
-        averageBias1 = getAverageBiasFromList(priceList, mean1)
-        averageBias5 = getAverageBiasFromList(priceList, mean5)
+        df = pd.DataFrame(d)
 
-        meanBiasRate = (mean1 - mean5) / mean5
+        with open("bull sampling.csv", "a+") as f:
+            df.to_csv(f, header=False)
 
-        print "mean bias rate ", str(meanBiasRate)
-        logger = ["mean bias rate ", str(meanBiasRate), "\n"]
-        file.writelines(logger)
-
-        print "mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1), " average bias1 ", str(averageBias1)
-        logger = ["mean1 ", str(mean1), " standard deviation1 ", str(standardDeviation1), " average bias1 ", str(averageBias1), "\n"]
-        file.writelines(logger)
-
-        print "mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5), " average bias5 ", str(averageBias5)
-        logger = ["mean5 ", str(mean5), " standard deviation5 ", str(standardDeviation5), " average bias5 ", str(averageBias5), "\n"]
-        file.writelines(logger)
-
-        # bullPrice = getCurrentPrice(connectSocket, bullCode)
-        # print "bull ", bullCode, " current price ", floatPrice(bullPrice)
-        # logger = ["bull ", bullCode, " current price ", str(floatPrice(bullPrice)), "\n"]
-        # file.writelines(logger)
-        #
-        # bearPrice = getCurrentPrice(connectSocket, bearCode)
-        # print "bear ", bearCode, " current price ", floatPrice(bearPrice)
-        # logger = ["bear ", bearCode, " current price ", str(floatPrice(bearPrice)), "\n"]
-        # file.writelines(logger)
-
-        # # ========================== bull ================================
-        # print "----------- bull gear -----------"
-        # log = ["----------- bull gear -----------", "\n"]
-        # file.writelines(log)
-        #
-        # gearArr = getGearData(connectSocket, bullCode, 10)
-        #
-        # buyOrder = []
-        # buyPrice = []
-        # buyVol = []
-        #
-        # sellOrder = []
-        # sellPrice = []
-        # sellVol = []
-        #
-        # if gearArr is not None:
-        #     for gear in gearArr:
-        #         buyOrder.append(gear["BuyOrder"])
-        #         buyPrice.append(gear["BuyPrice"])
-        #         buyVol.append(gear["BuyVol"])
-        #
-        #         sellOrder.append(gear["SellOrder"])
-        #         sellPrice.append(gear["SellPrice"])
-        #         sellVol.append(gear["SellVol"])
-        #
-        # if buyPrice is not None:
-        #     for i in range(len(sellPrice))[::-1]:
-        #         print "sell ", i + 1, " order ", sellOrder[i], " price ", floatPrice(sellPrice[i]), " vol ", sellVol[i]
-        #         log = ["sell ", str(i + 1), " order ", sellOrder[i], " price ", str(floatPrice(sellPrice[i])), " vol ", sellVol[i], "\n"]
-        #         file.writelines(log)
-        #
-        #     print "-- mid gear price ", (floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2
-        #     log = ["-- mid gear price ", str((floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2), "\n"]
-        #     file.writelines(log)
-        #
-        #     for i in range(len(buyPrice)):
-        #         print "buy ", i + 1, " order ", buyOrder[i], " price ", floatPrice(buyPrice[i]), " vol ", buyVol[i]
-        #         log = ["buy ", str(i + 1), " order ", buyOrder[i], " price ", str(floatPrice(buyPrice[i])), " vol ", buyVol[i], "\n"]
-        #         file.writelines(log)
-        #
-        #
-        # # ================= bear ===================
-        # print "----------- bear gear -----------"
-        # log = ["----------- bear gear -----------", "\n"]
-        # file.writelines(log)
-        #
-        # gearArr = getGearData(connectSocket, bearCode, 10)
-        #
-        # buyOrder = []
-        # buyPrice = []
-        # buyVol = []
-        #
-        # sellOrder = []
-        # sellPrice = []
-        # sellVol = []
-        #
-        # if gearArr is not None:
-        #     for gear in gearArr:
-        #         buyOrder.append(gear["BuyOrder"])
-        #         buyPrice.append(gear["BuyPrice"])
-        #         buyVol.append(gear["BuyVol"])
-        #
-        #         sellOrder.append(gear["SellOrder"])
-        #         sellPrice.append(gear["SellPrice"])
-        #         sellVol.append(gear["SellVol"])
-        #
-        # if buyPrice is not None:
-        #     for i in range(len(sellPrice))[::-1]:
-        #         print "sell ", i + 1, " order ", sellOrder[i], " price ", floatPrice(sellPrice[i]), " vol ", sellVol[i]
-        #         log = ["sell ", str(i + 1), " order ", sellOrder[i], " price ", str(floatPrice(sellPrice[i])), " vol ", sellVol[i], "\n"]
-        #         file.writelines(log)
-        #
-        #     print "-- mid gear price ", (floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2
-        #     log = ["-- mid gear price ", str((floatPrice(buyPrice[0]) + floatPrice(sellPrice[0])) / 2), "\n"]
-        #     file.writelines(log)
-        #
-        #     for i in range(len(buyPrice)):
-        #         print "buy ", i + 1, " order ", buyOrder[i], " price ", floatPrice(buyPrice[i]), " vol ", buyVol[i]
-        #         log = ["buy ", str(i + 1), " order ", buyOrder[i], " price ", str(floatPrice(buyPrice[i])), " vol ", buyVol[i], "\n"]
-        #         file.writelines(log)
-
-
-        log = ["==========================================================================================\n"]
-        file.writelines(log)
-
-        file.close()
         counter += 1
         time.sleep(oneTickTime)
     disconnect(connectSocket)

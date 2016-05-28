@@ -6,12 +6,10 @@ import time
 from FSApi import *
 from math import *
 
-#恒指法兴七七牛    67429
-
 host = "localhost"
 port = 11111
 
-targetCode = "67429" #恒指
+targetCode = "800000" #恒指
 
 oneTickTime = 1
 counter = 0
@@ -114,9 +112,29 @@ if connectSocket is not None:
 
         df = pd.DataFrame(d)
 
-        with open("bear sampling.csv", "a+") as f:
+        with open("sampling.csv", "a+") as f:
             df.to_csv(f, header=False)
 
         counter += 1
         time.sleep(oneTickTime)
     disconnect(connectSocket)
+
+#
+# l0 = []
+# l1 = []
+# for i in range(0, 10):
+#     l0.append(i)
+#     l1.append(-i)
+#
+# s0 = pd.Series(l0)
+# s1 = pd.Series(l1)
+#
+# d = {"s0" : s0, "s1" : s1}
+# df = pd.DataFrame(d)
+#
+# with open("sampling.csv", "a+") as f:
+#     df.to_csv(f, header=False)
+
+# pd.set_option('display.max_rows', len(s))
+# print s
+# pd.reset_option('display.max_rows')
