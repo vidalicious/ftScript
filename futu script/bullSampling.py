@@ -6,12 +6,12 @@ import time
 from FSApi import *
 from math import *
 
-#恒指法兴七七牛    67429
+# 恒指法兴七七牛   67314   20008
 
 host = "localhost"
 port = 11111
 
-targetCode = "67429" #恒指
+targetCode = "67314" #恒指
 
 oneTickTime = 1
 counter = 0
