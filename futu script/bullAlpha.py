@@ -7,35 +7,35 @@ from math import *
 import datetime
 import threading
 
-# 恒指法兴六乙牛   62951   19108
+# 恒指法兴七七牛   67314   20008
 
-# greed is good
+# golden cross
 # ==================== config =========================
-oneTickTime = 10
+oneTickTime = 1
 
 host = "localhost"
 port = 11111
 
 targetCode = "800000" # 恒指
-bullCode = "62951"
-bullRecyclePrice = 19108
+bullCode = "67314"
+bullRecyclePrice = 20008
 tradeOneHand = 10000
 
-ema2Count = 60 * 2 / oneTickTime
+ema10sCount = 10 / oneTickTime #10秒
 ema5Count = 60 * 5 / oneTickTime #5分钟tick
+
+ema10s_K = float(2.0 / (ema10sCount + 1))
+ema5_K = float(2.0 / (ema5Count + 1))
 
 windowCount = 60
 # =========================================================
 counter = 0
 
-mean2 = 0
+mean10s = 0
 mean5 = 0
 
-lastMean2 = 0
+lastMean10s = 0
 lastMean5 = 0
-
-ema2_K = float(2.0 / (ema2Count + 1))
-ema5_K = float(2.0 / (ema5Count + 1))
 
 pathTag = []
 
@@ -45,6 +45,8 @@ flag = False
 def trigger():
     global flag
     while True:
+        if isInMidRestTime():
+            continue
         flag = True
         time.sleep(oneTickTime)
 # ==========================================================
@@ -70,16 +72,16 @@ if connectSocket is not None:
         if flag: # one tick 触发一次
             flag = False
 
-            mean2 = updateMeanBy(floatPrice(currentTarget), ema2_K, mean2)
+            mean10s = updateMeanBy(floatPrice(currentTarget), ema10s_K, mean10s)
             mean5 = updateMeanBy(floatPrice(currentTarget), ema5_K, mean5)
 
-            print "mean2", str(mean2), " mean5 ", str(mean5)
+            print "mean10s", str(mean10s), " mean5 ", str(mean5)
             counter += 1
 
         if counter > windowCount:
 
             pathTag.extend(["counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S'), "\n"])
-            pathTag.extend(["mean2", str(mean2), " mean5 ", str(mean5), "\n"])
+            pathTag.extend(["mean10s", str(mean10s), " mean5 ", str(mean5), "\n"])
 
             bullBuy1Price = ""
             bullSell1Price = ""
@@ -106,7 +108,7 @@ if connectSocket is not None:
                     print "d"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif lastMean2 >= lastMean5 and mean2 < mean5:
+                elif lastMean10s > lastMean5 and mean10s < mean5:
                     tradePrice = bullBuy1Price
                     pathTag.append(" 1 ")
                     print "a"
@@ -126,7 +128,7 @@ if connectSocket is not None:
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
                 else:
-                    if lastMean2 <= lastMean5 and mean2 > mean5:
+                    if lastMean10s < lastMean5 and mean10s > mean5:
                         tradePrice = bullSell1Price
                         pathTag.append(" 6 ")
                         print "f"
@@ -138,8 +140,7 @@ if connectSocket is not None:
         # ======== update =============
         file.close()
         pathTag = []
-        lastMean2 = mean2
+        lastMean10s = mean10s
         lastMean5 = mean5
 
-        # time.sleep(1)
     disconnect(connectSocket)
