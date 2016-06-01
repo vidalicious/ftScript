@@ -49,6 +49,8 @@ if connectSocket is not None:
     while True:
         if not isGameBegin():
             continue
+        elif isInMidRestTime():
+            continue
         elif datetime.datetime.now().time() > datetime.time(16, 0, 1):
             break
 
