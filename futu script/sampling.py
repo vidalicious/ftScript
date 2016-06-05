@@ -9,7 +9,7 @@ from math import *
 host = "localhost"
 port = 11111
 
-targetCode = "67617" #恒指
+targetCode = "67740" #恒指
 
 oneTickTime = 1
 counter = 0
@@ -114,8 +114,12 @@ if connectSocket is not None:
 
         df = pd.DataFrame(d)
 
+        if counter == 0:
+            hasHead = True
+        else:
+            hasHead = False
         with open("sampling.csv", "a+") as f:
-            df.to_csv(f, header=False)
+            df.to_csv(f, header=hasHead)
 
         counter += 1
         time.sleep(oneTickTime)
