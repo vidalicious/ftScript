@@ -44,6 +44,10 @@ mean30 = 0
 mean45 = 0
 mean60 = 0
 
+lastMean5 = 0
+
+energy5 = 0
+
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
@@ -66,6 +70,13 @@ if connectSocket is not None:
         mean45 = updateMeanBy(floatPrice(currentTarget), ema45_K, mean45)
         mean60 = updateMeanBy(floatPrice(currentTarget), ema60_K, mean60)
 
+        if lastMean5 == 0:
+            k5 = 0
+        else:
+            k5 = mean5 - lastMean5 #斜率
+
+        energy5 = energy5 + (floatPrice(currentTarget) - mean5)
+
         lt = []
         l10s = []
         l1 = []
@@ -76,6 +87,10 @@ if connectSocket is not None:
         l30 = []
         l45 = []
         l60 = []
+        lk5 = []
+        lenergy5 = []
+
+
         lIndex = []
 
         lt.append(floatPrice(currentTarget))
@@ -88,6 +103,9 @@ if connectSocket is not None:
         l30.append(mean30)
         l45.append(mean45)
         l60.append(mean60)
+        lk5.append(k5)
+        lenergy5.append(energy5)
+
         lIndex.append(counter)
 
         st = pd.Series(lt, index=lIndex)
@@ -100,17 +118,21 @@ if connectSocket is not None:
         s30 = pd.Series(l30, index=lIndex)
         s45 = pd.Series(l45, index=lIndex)
         s60 = pd.Series(l60, index=lIndex)
+        sk5 = pd.Series(lk5, index=lIndex)
+        senergy5 = pd.Series(lenergy5, index=lIndex)
 
         d = {"st" : st,
              "s10s" : s10s,
              "s1" : s1,
              "s5" : s5,
              "s10" : s10,
-             "s15" : s15,
-             "s20" : s20,
-             "s30" : s30,
-             "s45" : s45,
-             "s60" : s60}
+             # "s15" : s15,
+             # "s20" : s20,
+             # "s30" : s30,
+             # "s45" : s45,
+             # "s60" : s60,
+             "sk5" : sk5,
+             "s energy5" : senergy5}
 
         df = pd.DataFrame(d)
 
@@ -122,6 +144,7 @@ if connectSocket is not None:
             df.to_csv(f, header=hasHead)
 
         counter += 1
+        lastMean5 = mean5
         time.sleep(oneTickTime)
     disconnect(connectSocket)
 
