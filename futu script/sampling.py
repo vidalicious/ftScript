@@ -9,7 +9,7 @@ from math import *
 host = "localhost"
 port = 11111
 
-targetCode = "67740" #恒指
+targetCode = "67836" #恒指
 
 oneTickTime = 1
 counter = 0
@@ -48,6 +48,8 @@ lastMean5 = 0
 
 energy5 = 0
 
+meank5 = 0
+
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
@@ -75,7 +77,9 @@ if connectSocket is not None:
         else:
             k5 = mean5 - lastMean5 #斜率
 
-        energy5 = energy5 + (floatPrice(currentTarget) - mean5)
+        energy5 = floatPrice(currentTarget) - mean5
+
+        meank5 = updateMeanBy(k5, ema5_K, meank5)
 
         lt = []
         l10s = []
@@ -89,7 +93,7 @@ if connectSocket is not None:
         l60 = []
         lk5 = []
         lenergy5 = []
-
+        lmeank5 = []
 
         lIndex = []
 
@@ -105,6 +109,7 @@ if connectSocket is not None:
         l60.append(mean60)
         lk5.append(k5)
         lenergy5.append(energy5)
+        lmeank5.append(meank5)
 
         lIndex.append(counter)
 
@@ -120,6 +125,7 @@ if connectSocket is not None:
         s60 = pd.Series(l60, index=lIndex)
         sk5 = pd.Series(lk5, index=lIndex)
         senergy5 = pd.Series(lenergy5, index=lIndex)
+        smeank5 = pd.Series(lmeank5, index=lIndex)
 
         d = {"st" : st,
              "s10s" : s10s,
@@ -132,7 +138,8 @@ if connectSocket is not None:
              # "s45" : s45,
              # "s60" : s60,
              "sk5" : sk5,
-             "s energy5" : senergy5}
+             "s energy5" : senergy5,
+             "s meank5" : smeank5}
 
         df = pd.DataFrame(d)
 

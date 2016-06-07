@@ -5,9 +5,9 @@ import threading
 import pandas
 # a = time(22, 34, 0000)
 # b = datetime.now().time()
-threadPool = []
-print datetime.datetime.now().time() > datetime.time(15, 58, 0)
-print str(True)
+# threadPool = []
+# print datetime.datetime.now().time() > datetime.time(15, 58, 0)
+print 2e-5 == 0.00002
 
 # def a():
 #     while True:
