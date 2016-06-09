@@ -119,6 +119,12 @@ if connectSocket is not None:
                     print "i"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
+                elif floatPrice(currentTarget) - floatPrice(positionCost) > 0.002: #及时清仓
+                    tradePrice = currentTarget
+                    pathTag.append(" 8 ")
+                    print "j"
+                    simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
+
                 elif lastMean5 > lastMean10 and mean5 < mean10:
                     tradePrice = currentTarget
                     pathTag.append(" 1 ")
@@ -146,7 +152,7 @@ if connectSocket is not None:
                         simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
                     elif lastMean5 < lastMean10 and mean5 > mean10:
-                        tradePrice = bullBuy1Price
+                        tradePrice = currentTarget
                         pathTag.append(" 6 ")
                         print "f"
 

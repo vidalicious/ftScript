@@ -79,8 +79,6 @@ if connectSocket is not None:
 
         energy5 = floatPrice(currentTarget) - mean5
 
-        meank5 = updateMeanBy(k5, ema5_K, meank5)
-
         lt = []
         l10s = []
         l1 = []
@@ -93,7 +91,6 @@ if connectSocket is not None:
         l60 = []
         lk5 = []
         lenergy5 = []
-        lmeank5 = []
 
         lIndex = []
 
@@ -109,7 +106,6 @@ if connectSocket is not None:
         l60.append(mean60)
         lk5.append(k5)
         lenergy5.append(energy5)
-        lmeank5.append(meank5)
 
         lIndex.append(counter)
 
@@ -125,7 +121,6 @@ if connectSocket is not None:
         s60 = pd.Series(l60, index=lIndex)
         sk5 = pd.Series(lk5, index=lIndex)
         senergy5 = pd.Series(lenergy5, index=lIndex)
-        smeank5 = pd.Series(lmeank5, index=lIndex)
 
         d = {"st" : st,
              "s10s" : s10s,
@@ -138,8 +133,7 @@ if connectSocket is not None:
              # "s45" : s45,
              # "s60" : s60,
              "sk5" : sk5,
-             "s energy5" : senergy5,
-             "s meank5" : smeank5}
+             "s energy5" : senergy5}
 
         df = pd.DataFrame(d)
 
