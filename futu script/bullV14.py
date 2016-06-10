@@ -16,9 +16,10 @@ oneTickTime = 1
 host = "localhost"
 port = 11111
 
-targetCode = "67836" # 恒指
+targetCode = "67836"
+indexCode = "800000" # 恒指
 bullCode = targetCode
-bullRecyclePrice = 20708
+indexRecyclePrice = 20708
 tradeOneHand = 10000
 
 ema5Count = 60 * 5 / oneTickTime #5分钟tick
@@ -69,6 +70,8 @@ if connectSocket is not None:
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
 
+        currentIndex = getCurrentPrice(connectSocket, indexCode)
+
         if flag: # one tick 触发一次
             flag = False
 
@@ -113,19 +116,13 @@ if connectSocket is not None:
                     print "d"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif k5 < -2e-5:
-                    tradePrice = bullBuy1Price
-                    pathTag.append(" 7 ")
-                    print "i"
-                    simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
-
                 elif floatPrice(currentTarget) - floatPrice(positionCost) > 0.002: #及时清仓
                     tradePrice = currentTarget
                     pathTag.append(" 8 ")
                     print "j"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif lastMean5 > lastMean10 and mean5 < mean10:
+                elif lastMean5 < lastMean10 and mean5 > mean10:
                     tradePrice = currentTarget
                     pathTag.append(" 1 ")
                     print "a"
@@ -139,19 +136,14 @@ if connectSocket is not None:
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
             else:
-                if abs(floatPrice(currentTarget) - bullRecyclePrice) < 300:
+                if abs(floatPrice(currentIndex) - indexRecyclePrice) < 300:
                     print "too near recycle price"
                 elif not isInGoldenTime():
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
                 else:
-                    if k5 > 2e-5:
-                        tradePrice = bullSell1Price
-                        pathTag.append(" 5 ")
-                        print "e"
-                        simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
-                    elif lastMean5 < lastMean10 and mean5 > mean10:
+                    if lastMean5 > lastMean10 and mean5 < mean10:
                         tradePrice = currentTarget
                         pathTag.append(" 6 ")
                         print "f"
