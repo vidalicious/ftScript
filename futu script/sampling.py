@@ -16,6 +16,8 @@ counter = 0
 
 ema10sCount = 10 / oneTickTime #10秒
 ema1Count = 60 / oneTickTime # 1分钟的tick数
+ema2Count = 60 * 2 / oneTickTime
+ema3Count = 60 * 3 / oneTickTime
 ema5Count = 60 * 5 / oneTickTime #5分钟tick
 ema10Count = 60 * 10 / oneTickTime
 ema15Count = 60 * 15 / oneTickTime
@@ -26,6 +28,8 @@ ema60Count = 60 * 60 / oneTickTime
 
 ema10s_K = float(2.0 / (ema10sCount + 1))
 ema1_K = float(2.0 / (ema1Count + 1))
+ema2_K = float(2.0 / (ema2Count + 1))
+ema3_K = float(2.0 / (ema3Count + 1))
 ema5_K = float(2.0 / (ema5Count + 1))
 ema10_K = float(2.0 / (ema10Count + 1))
 ema15_K = float(2.0 / (ema15Count + 1))
@@ -36,6 +40,8 @@ ema60_K = float(2.0 / (ema60Count + 1))
 
 mean10s = 0
 mean1 = 0
+mean2 = 0
+mean3 = 0
 mean5 = 0
 mean10 = 0
 mean15 = 0
@@ -64,6 +70,8 @@ if connectSocket is not None:
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
         mean10s = updateMeanBy(floatPrice(currentTarget), ema10s_K, mean10s)
         mean1 = updateMeanBy(floatPrice(currentTarget), ema1_K, mean1)
+        mean2 = updateMeanBy(floatPrice(currentTarget), ema2_K, mean2)
+        mean3 = updateMeanBy(floatPrice(currentTarget), ema3_K, mean3)
         mean5 = updateMeanBy(floatPrice(currentTarget), ema5_K, mean5)
         mean10 = updateMeanBy(floatPrice(currentTarget), ema10_K, mean10)
         mean15 = updateMeanBy(floatPrice(currentTarget), ema15_K, mean15)
@@ -82,6 +90,8 @@ if connectSocket is not None:
         lt = []
         l10s = []
         l1 = []
+        l2 = []
+        l3 = []
         l5 = []
         l10 = []
         l15 = []
@@ -97,6 +107,8 @@ if connectSocket is not None:
         lt.append(floatPrice(currentTarget))
         l10s.append(mean10s)
         l1.append(mean1)
+        l2.append(mean2)
+        l3.append(mean3)
         l5.append(mean5)
         l10.append(mean10)
         l15.append(mean15)
@@ -112,6 +124,8 @@ if connectSocket is not None:
         st = pd.Series(lt, index=lIndex)
         s10s = pd.Series(l10s, index=lIndex)
         s1 = pd.Series(l1, index=lIndex)
+        s2 = pd.Series(l2, index=lIndex)
+        s3 = pd.Series(l3, index=lIndex)
         s5 = pd.Series(l5, index=lIndex)
         s10 = pd.Series(l10, index=lIndex)
         s15 = pd.Series(l15, index=lIndex)
@@ -125,13 +139,15 @@ if connectSocket is not None:
         d = {"st" : st,
              "s10s" : s10s,
              "s1" : s1,
+             "s2" : s2,
+             "s3" : s3,
              "s5" : s5,
              "s10" : s10,
-             # "s15" : s15,
-             # "s20" : s20,
-             # "s30" : s30,
-             # "s45" : s45,
-             # "s60" : s60,
+             "s15" : s15,
+             "s20" : s20,
+             "s30" : s30,
+             "s45" : s45,
+             "s60" : s60,
              "sk5" : sk5,
              "s energy5" : senergy5}
 

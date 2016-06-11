@@ -204,6 +204,17 @@ def simu_checkOrderAndSellWith(connectSocket, price, quantity, stockCode, file, 
 		pathTag.append("\n")
 		file.writelines(pathTag)
 
+def simu_checkOrderAndCancelSellOrderWith(connectSocket, stockCode, file, pathTag):
+	orderInfoArr = simu_inquireOrder(connectSocket)
+	if orderInfoArr is not None:
+		for orderInfo in orderInfoArr:
+			if orderInfo["StockCode"] == stockCode and (orderInfo["Status"] == "0" or orderInfo["Status"] == "1" or orderInfo["Status"] == "2"):
+				if orderInfo["OrderSide"] == "1":
+					simu_setOrderStatus(connectSocket, orderInfo["LocalID"], orderInfo["OrderID"], 0)  # 撤单
+					pathTag.append(" 撤卖单 ")
+					pathTag.append("\n")
+					file.writelines(pathTag)
+
 # # 	是否有关于该股票的仓位
 # def simu_hasPosition(connectSocket, quality, stockCode):
 # 	positionArr = simu_inquirePosition(connectSocket)
