@@ -9,7 +9,7 @@ from math import *
 host = "localhost"
 port = 11111
 
-targetCode = "67836" #恒指
+targetCode = "67914" #恒指
 
 oneTickTime = 1
 counter = 0
