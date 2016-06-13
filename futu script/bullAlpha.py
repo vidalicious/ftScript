@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指法兴七六牛   67914   20658
+# 恒指瑞银七十牛   67588   20000
 
 # golden cross
 # ==================== config =========================
@@ -16,10 +16,10 @@ oneTickTime = 1
 host = "localhost"
 port = 11111
 
-targetCode = "67914"
+targetCode = "67588"
 indexCode = "800000" # 恒指
 bullCode = targetCode
-indexRecyclePrice = 20658
+indexRecyclePrice = 20000
 tradeOneHand = 10000
 
 ema1Count = 60 / oneTickTime # 1分钟的tick数
@@ -111,23 +111,22 @@ if connectSocket is not None:
                     print "d"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif floatPrice(currentTarget) - floatPrice(positionCost) > 0: #及时清仓
+                elif positionRatio < -0.02:
                     tradePrice = currentTarget
+                    pathTag.append(" 3 ")
+                    print "c"
+                    simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
+
+                elif floatPrice(positionCost) >= floatPrice(bullBuy1Price) and floatPrice(positionCost) <= floatPrice(bullSell1Price):
+                    tradePrice = strPriceFromFloat(floatPrice(positionCost) + 0.001)
                     pathTag.append(" 8 ")
                     print "j"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif lastMean1 < lastMean5 and mean1 > mean5:
+                elif floatPrice(positionCost) < floatPrice(bullBuy1Price):
                     tradePrice = currentTarget
                     pathTag.append(" 1 ")
                     print "a"
-
-                    simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
-
-                elif positionRatio < -0.03:
-                    tradePrice = currentTarget
-                    pathTag.append(" 3 ")
-                    print "c"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
             else:
