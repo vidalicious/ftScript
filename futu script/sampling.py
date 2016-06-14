@@ -9,7 +9,7 @@ from math import *
 host = "localhost"
 port = 11111
 
-targetCode = "67588" #恒指
+targetCode = "67450" #恒指
 
 oneTickTime = 1
 counter = 0
@@ -68,6 +68,14 @@ if connectSocket is not None:
 
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
+
+        bullBuy1Price = ""
+        bullSell1Price = ""
+        bullGearArr = getGearData(connectSocket, targetCode, 1)
+        if bullGearArr is not None:
+            bullBuy1Price = bullGearArr[0]["BuyPrice"]
+            bullSell1Price = bullGearArr[0]["SellPrice"]
+
         mean10s = updateMeanBy(floatPrice(currentTarget), ema10s_K, mean10s)
         mean1 = updateMeanBy(floatPrice(currentTarget), ema1_K, mean1)
         mean2 = updateMeanBy(floatPrice(currentTarget), ema2_K, mean2)
@@ -88,6 +96,8 @@ if connectSocket is not None:
         energy5 = floatPrice(currentTarget) - mean5
 
         lt = []
+        lbuy1 = []
+        lsell1 = []
         l10s = []
         l1 = []
         l2 = []
@@ -105,6 +115,8 @@ if connectSocket is not None:
         lIndex = []
 
         lt.append(floatPrice(currentTarget))
+        lbuy1.append(floatPrice(bullBuy1Price))
+        lsell1.append(floatPrice(bullSell1Price))
         l10s.append(mean10s)
         l1.append(mean1)
         l2.append(mean2)
@@ -122,6 +134,8 @@ if connectSocket is not None:
         lIndex.append(counter)
 
         st = pd.Series(lt, index=lIndex)
+        sbuy1 = pd.Series(lbuy1, index=lIndex)
+        ssell1 = pd.Series(lsell1, index=lIndex)
         s10s = pd.Series(l10s, index=lIndex)
         s1 = pd.Series(l1, index=lIndex)
         s2 = pd.Series(l2, index=lIndex)
@@ -137,6 +151,8 @@ if connectSocket is not None:
         senergy5 = pd.Series(lenergy5, index=lIndex)
 
         d = {"st" : st,
+             "buy1" : sbuy1,
+             "sell1" : ssell1,
              "s10s" : s10s,
              "s1" : s1,
              "s2" : s2,

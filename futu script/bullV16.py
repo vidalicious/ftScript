@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指瑞信七七牛   67450   19888
+# 恒指法兴七七牛   67836   20708
 
 # golden cross
 # ==================== config =========================
@@ -16,10 +16,10 @@ oneTickTime = 1
 host = "localhost"
 port = 11111
 
-targetCode = "67450"
+targetCode = "67836"
 indexCode = "800000" # 恒指
 bullCode = targetCode
-indexRecyclePrice = 19888
+indexRecyclePrice = 20708
 tradeOneHand = 10000
 
 ema10sCount = 10 / oneTickTime #10秒
