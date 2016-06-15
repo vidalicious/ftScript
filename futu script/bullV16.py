@@ -122,7 +122,7 @@ if connectSocket is not None:
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
                 else:
-                    tradePrice = currentTarget
+                    tradePrice = bullBuy1Price
                     pathTag.append(" 1 ")
                     print "a"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
