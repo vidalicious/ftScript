@@ -115,7 +115,7 @@ if connectSocket is not None:
                     print "444"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.001 and \
+                elif floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.002 and \
                         floatPrice(bullSell1Price) - floatPrice(currentTarget) > floatPrice(currentTarget) - floatPrice(bullBuy1Price):
                     pathTag.append(" fly over ")
                     print "fly over"
@@ -141,14 +141,14 @@ if connectSocket is not None:
                     print "not in golden time"
                 else:
 
-                    if floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.001 and \
+                    if floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.002 and \
                             floatPrice(bullSell1Price) - floatPrice(currentTarget) > floatPrice(currentTarget) - floatPrice(bullBuy1Price):
                         tradePrice = bullBuy1Price
                         pathTag.append(" sss ")
                         print "sss"
                         simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
-                    elif lastMean10s > lastMean1 and mean10s < mean1:
+                    elif lastMean10s < lastMean1 and mean10s > mean1:
                         tradePrice = bullBuy1Price
                         pathTag.append(" 6 ")
                         print "f"
