@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指法兴七六牛   67545   19958
+# 恒指法兴七三牛   69333   19200
 
 # golden cross
 # ==================== config =========================
@@ -16,17 +16,23 @@ oneTickTime = 1
 host = "localhost"
 port = 11111
 
-targetCode = "67545"
+targetCode = "69333"
 indexCode = "800000" # 恒指
 bullCode = targetCode
-indexRecyclePrice = 19958
+indexRecyclePrice = 19200
 tradeOneHand = 10000
 
 ema10sCount = 10 / oneTickTime #10秒
 ema1Count = 60 / oneTickTime # 1分钟的tick数
 
+ema30Count = 60 * 30 / oneTickTime
+ema60Count = 60 * 60 / oneTickTime
+
 ema10s_K = float(2.0 / (ema10sCount + 1))
 ema1_K = float(2.0 / (ema1Count + 1))
+
+ema30_K = float(2.0 / (ema30Count + 1))
+ema60_K = float(2.0 / (ema60Count + 1))
 
 windowCount = 60
 # =========================================================
@@ -34,9 +40,13 @@ counter = 0
 
 mean10s = 0
 mean1 = 0
+mean30 = 0
+mean60 = 0
 
 lastMean10s = 0
 lastMean1 = 0
+lastMean30 = 0
+lastMean60 = 0
 
 pathTag = []
 
@@ -77,6 +87,8 @@ if connectSocket is not None:
 
             mean10s = updateMeanBy(floatPrice(currentTarget), ema10s_K, mean10s)
             mean1 = updateMeanBy(floatPrice(currentTarget), ema1_K, mean1)
+            mean30 = updateMeanBy(floatPrice(currentTarget), ema30_K, mean30)
+            mean60 = updateMeanBy(floatPrice(currentTarget), ema60_K, mean60)
 
             counter += 1
 
@@ -115,7 +127,7 @@ if connectSocket is not None:
                     print "444"
                     simu_checkOrderAndSellWith(connectSocket, tradePrice, positionQty, bullCode, file, pathTag)
 
-                elif floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.001 and \
+                elif floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.002 and \
                         floatPrice(bullSell1Price) - floatPrice(currentTarget) > floatPrice(currentTarget) - floatPrice(bullBuy1Price):
                     pathTag.append(" fly over ")
                     print "fly over"
@@ -140,19 +152,19 @@ if connectSocket is not None:
                     pathTag.append(" not in golden time ")
                     print "not in golden time"
                 else:
+                    if mean30 > mean60:
+                        if floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.002 and \
+                                floatPrice(bullSell1Price) - floatPrice(currentTarget) > floatPrice(currentTarget) - floatPrice(bullBuy1Price):
+                            tradePrice = bullBuy1Price
+                            pathTag.append(" sss ")
+                            print "sss"
+                            simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
-                    if floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.001 and \
-                            floatPrice(bullSell1Price) - floatPrice(currentTarget) > floatPrice(currentTarget) - floatPrice(bullBuy1Price):
-                        tradePrice = bullBuy1Price
-                        pathTag.append(" sss ")
-                        print "sss"
-                        simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
-
-                    elif lastMean10s > lastMean1 and mean10s < mean1:
-                        tradePrice = bullBuy1Price
-                        pathTag.append(" 6 ")
-                        print "f"
-                        simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
+                        elif lastMean10s < lastMean1 and mean10s > mean1:
+                            tradePrice = bullBuy1Price
+                            pathTag.append(" 6 ")
+                            print "f"
+                            simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
                     print "g"
 
@@ -161,5 +173,7 @@ if connectSocket is not None:
         pathTag = []
         lastMean10s = mean10s
         lastMean1 = mean1
+        lastMean30 = mean30
+        lastMean60 = mean60
 
     disconnect(connectSocket)
