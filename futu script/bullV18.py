@@ -155,12 +155,12 @@ if connectSocket is not None:
                     if mean30 > mean60:
                         if floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.002 and \
                                 floatPrice(bullSell1Price) - floatPrice(currentTarget) > floatPrice(currentTarget) - floatPrice(bullBuy1Price):
-                            tradePrice = bullBuy1Price
+                            tradePrice = currentTarget
                             pathTag.append(" sss ")
                             print "sss"
                             simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
-                        elif lastMean10s < lastMean1 and mean10s > mean1:
+                        elif lastMean10s > lastMean1 and mean10s < mean1:
                             tradePrice = bullBuy1Price
                             pathTag.append(" 6 ")
                             print "f"

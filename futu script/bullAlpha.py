@@ -7,7 +7,7 @@ from math import *
 import datetime
 import threading
 
-# 恒指法兴七三牛   69333   19200
+# 恒指法兴七二牛   69343   19600
 
 # golden cross
 # ==================== config =========================
@@ -16,10 +16,10 @@ oneTickTime = 1
 host = "localhost"
 port = 11111
 
-targetCode = "69333"
+targetCode = "69343"
 indexCode = "800000" # 恒指
 bullCode = targetCode
-indexRecyclePrice = 19200
+indexRecyclePrice = 19600
 tradeOneHand = 10000
 
 ema10sCount = 10 / oneTickTime #10秒
@@ -155,12 +155,12 @@ if connectSocket is not None:
                     if mean30 > mean60:
                         if floatPrice(bullSell1Price) - floatPrice(bullBuy1Price) > 0.002 and \
                                 floatPrice(bullSell1Price) - floatPrice(currentTarget) > floatPrice(currentTarget) - floatPrice(bullBuy1Price):
-                            tradePrice = bullBuy1Price
+                            tradePrice = currentTarget
                             pathTag.append(" sss ")
                             print "sss"
                             simu_checkOrderAndBuyWith(connectSocket, tradePrice, tradeOneHand, bullCode, file, pathTag)
 
-                        elif lastMean10s < lastMean1 and mean10s > mean1:
+                        elif lastMean10s > lastMean1 and mean10s < mean1:
                             tradePrice = bullBuy1Price
                             pathTag.append(" 6 ")
                             print "f"

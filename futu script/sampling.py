@@ -9,7 +9,7 @@ from math import *
 host = "localhost"
 port = 11111
 
-targetCode = "67545" #恒指
+targetCode = "69343" #恒指
 
 oneTickTime = 1
 counter = 0
@@ -56,6 +56,8 @@ energy5 = 0
 
 meank5 = 0
 
+targetList = []
+
 connectSocket = connect(host, port)
 if connectSocket is not None:
     while True:
@@ -68,6 +70,10 @@ if connectSocket is not None:
 
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
+
+        targetList.insert(0, floatPrice(currentTarget))
+        if len(targetList) > 60 * 60:
+            targetList = targetList[:60 * 60]
 
         bullBuy1Price = ""
         bullSell1Price = ""
@@ -88,12 +94,8 @@ if connectSocket is not None:
         mean45 = updateMeanBy(floatPrice(currentTarget), ema45_K, mean45)
         mean60 = updateMeanBy(floatPrice(currentTarget), ema60_K, mean60)
 
-        if lastMean5 == 0:
-            k5 = 0
-        else:
-            k5 = mean5 - lastMean5 #斜率
-
-        energy5 = floatPrice(currentTarget) - mean5
+        variance60 = getVarianceFromList(targetList, mean60)
+        sd60 = sqrt(variance60)
 
         lt = []
         lbuy1 = []
@@ -109,8 +111,7 @@ if connectSocket is not None:
         l30 = []
         l45 = []
         l60 = []
-        lk5 = []
-        lenergy5 = []
+        lsd60 = []
 
         lIndex = []
 
@@ -128,8 +129,7 @@ if connectSocket is not None:
         l30.append(mean30)
         l45.append(mean45)
         l60.append(mean60)
-        lk5.append(k5)
-        lenergy5.append(energy5)
+        lsd60.append(sd60)
 
         lIndex.append(counter)
 
@@ -147,8 +147,7 @@ if connectSocket is not None:
         s30 = pd.Series(l30, index=lIndex)
         s45 = pd.Series(l45, index=lIndex)
         s60 = pd.Series(l60, index=lIndex)
-        sk5 = pd.Series(lk5, index=lIndex)
-        senergy5 = pd.Series(lenergy5, index=lIndex)
+        ssd60 = pd.Series(lsd60, index=lIndex)
 
         d = {"st" : st,
              "buy1" : sbuy1,
@@ -164,8 +163,8 @@ if connectSocket is not None:
              "s30" : s30,
              "s45" : s45,
              "s60" : s60,
-             "sk5" : sk5,
-             "s energy5" : senergy5}
+             "sd60" : ssd60
+        }
 
         df = pd.DataFrame(d)
 
