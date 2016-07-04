@@ -56,7 +56,10 @@ energy5 = 0
 
 meank5 = 0
 
-targetList = []
+targetList5 = []
+targetList10 = []
+targetList20 = []
+targetList30 = []
 
 connectSocket = connect(host, port)
 if connectSocket is not None:
@@ -71,9 +74,21 @@ if connectSocket is not None:
         currentTarget = getCurrentPrice(connectSocket, targetCode)
         print "counter ", str(counter), " target ", str(floatPrice(currentTarget)), " time ", time.strftime('%Y-%m-%d %H:%M:%S')
 
-        targetList.insert(0, floatPrice(currentTarget))
-        if len(targetList) > 60 * 60:
-            targetList = targetList[:60 * 60]
+        targetList5.insert(0, floatPrice(currentTarget))
+        if len(targetList5) > 60 * 5 / oneTickTime:
+            targetList5 = targetList5[:60 * 5 / oneTickTime]
+
+        targetList10.insert(0, floatPrice(currentTarget))
+        if len(targetList10) > 60 * 10 / oneTickTime:
+            targetList10 = targetList10[:60 * 10 / oneTickTime]
+
+        targetList20.insert(0, floatPrice(currentTarget))
+        if len(targetList20) > 60 * 20 / oneTickTime:
+            targetList20 = targetList20[:60 * 20 / oneTickTime]
+
+        targetList30.insert(0, floatPrice(currentTarget))
+        if len(targetList30) > 60 * 30 / oneTickTime:
+            targetList30 = targetList30[:60 * 30 / oneTickTime]
 
         bullBuy1Price = ""
         bullSell1Price = ""
@@ -94,8 +109,17 @@ if connectSocket is not None:
         mean45 = updateMeanBy(floatPrice(currentTarget), ema45_K, mean45)
         mean60 = updateMeanBy(floatPrice(currentTarget), ema60_K, mean60)
 
-        variance60 = getVarianceFromList(targetList, mean60)
-        sd60 = sqrt(variance60)
+        variance5 = getVarianceFromList(targetList5, mean5)
+        sd5 = sqrt(variance5)
+
+        variance10 = getVarianceFromList(targetList10, mean10)
+        sd10 = sqrt(variance10)
+
+        variance20 = getVarianceFromList(targetList20, mean20)
+        sd20 = sqrt(variance20)
+
+        variance30 = getVarianceFromList(targetList30, mean30)
+        sd30 = sqrt(variance30)
 
         lt = []
         lbuy1 = []
@@ -111,7 +135,10 @@ if connectSocket is not None:
         l30 = []
         l45 = []
         l60 = []
-        lsd60 = []
+        lsd5 = []
+        lsd10 = []
+        lsd20 = []
+        lsd30 = []
 
         lIndex = []
 
@@ -129,7 +156,10 @@ if connectSocket is not None:
         l30.append(mean30)
         l45.append(mean45)
         l60.append(mean60)
-        lsd60.append(sd60)
+        lsd5.append(sd5)
+        lsd10.append(sd10)
+        lsd20.append(sd20)
+        lsd30.append(sd30)
 
         lIndex.append(counter)
 
@@ -147,7 +177,10 @@ if connectSocket is not None:
         s30 = pd.Series(l30, index=lIndex)
         s45 = pd.Series(l45, index=lIndex)
         s60 = pd.Series(l60, index=lIndex)
-        ssd60 = pd.Series(lsd60, index=lIndex)
+        ssd5 = pd.Series(lsd5, index=lIndex)
+        ssd10 = pd.Series(lsd10, index=lIndex)
+        ssd20 = pd.Series(lsd20, index=lIndex)
+        ssd30 = pd.Series(lsd30, index=lIndex)
 
         d = {"st" : st,
              "buy1" : sbuy1,
@@ -163,7 +196,10 @@ if connectSocket is not None:
              "s30" : s30,
              "s45" : s45,
              "s60" : s60,
-             "sd60" : ssd60
+             "sd5" : ssd5,
+             "sd10" : ssd10,
+             "sd20" : ssd20,
+             "sd30" : ssd30
         }
 
         df = pd.DataFrame(d)
